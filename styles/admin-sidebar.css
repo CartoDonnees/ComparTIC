@@ -1,0 +1,492 @@
+/* ==========================================================================
+   CompareTIC   Barre latérale de l'espace admin / opérateur
+   --------------------------------------------------------------------------
+   Préfixe `adsb-`. Remplace le gabarit `.navbar-vertical-nav` hérité du thème :
+   la largeur, le positionnement et le comportement responsive sont désormais
+   définis ici, sans dépendre des règles contradictoires de globals.css.
+
+   Importé après admin-header.css dans pages/_app.js.
+   ========================================================================== */
+
+:root {
+  /* Largeur de la barre latérale, partagée avec l en-tête (admin-header.css)
+     et le contenu (.main-content-wrapper, admin.css). */
+  --adsb-w: 236px;
+}
+
+.adsb {
+  --adsb-bg: #113326;
+  --adsb-bg-2: #d65308 ;
+  --adsb-ink: #cfe0d7;
+  --adsb-ink-strong: #ffffff;
+  --adsb-accent: #03832e;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  width: var(--adsb-w);
+  height: 100vh;
+  background: linear-gradient(180deg, var(--adsb-bg) 30%,  var(--adsb-bg-2) 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 2px 0 14px rgba(0, 0, 0, 0.18);
+}
+
+/* ==========================================================================
+   1. En-tête de la barre (logo)
+   ========================================================================== */
+.adsb-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: var(--adh-h, 62px);
+  padding: 0 14px;
+  border-bottom: 1px solid rgba(240, 234, 234, 0.07);
+}
+.adsb-brand-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  text-decoration: none;
+}
+.adsb-brand-link img {
+  height: 26px;
+  width: auto;
+  flex-shrink: 0;
+}
+.adsb-brand-link span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+.adsb-brand-link strong {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--adsb-ink-strong);
+  letter-spacing: 0.06em;
+}
+.adsb-brand-link small {
+  font-size: 0.68rem;
+  color: var(--adsb-accent);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+/* Le bouton de fermeture n'a de sens que sur le tiroir mobile. */
+.adsb-close {
+  display: none;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  color: var(--adsb-ink);
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   2. Corps défilant
+   ========================================================================== */
+.adsb-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 12px 10px;
+  /* Barre de défilement discrète (Firefox + WebKit) */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+.adsb-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.adsb-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 3px;
+}
+
+.adsb-section {
+  margin: 4px 0 8px 10px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(207, 224, 215, 0.5);
+}
+
+.adsb-list,
+.adsb-sub {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================================================
+   3. Liens
+   ========================================================================== */
+.adsb-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  margin-bottom: 2px;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--adsb-ink);
+  text-align: left;
+  text-decoration: none;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.adsb-link:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--adsb-ink-strong);
+}
+.adsb-link.active {
+  background: white;
+  color: #04140c;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(47, 181, 106, 0.28);
+}
+.adsb-link.active .adsb-ico {
+  color: #04140c;
+}
+/* Groupe replié dont une entrée est active : repère discret. */
+.adsb-group-btn.has-active {
+  color: var(--adsb-ink-strong);
+}
+.adsb-group-btn.has-active .adsb-ico {
+  color: var(--adsb-accent);
+}
+
+.adsb-ico {
+  flex: 0 0 1.1em;
+  font-size: 1rem;
+  text-align: center;
+  color: rgba(207, 224, 215, 0.75);
+  transition: color 0.15s ease;
+}
+.adsb-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.adsb-ext {
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+.adsb-caret {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  transition: transform 0.18s ease;
+}
+.adsb-caret.up {
+  transform: rotate(180deg);
+}
+
+/* ---- Sous-menu ---- */
+.adsb-sub {
+  position: relative;
+  margin: 2px 0 6px 20px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+.adsb-link.child {
+  padding: 0.48rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.adsb-link.child.active {
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   4. Pied : identité et déconnexion
+   ========================================================================== */
+.adsb-foot {
+  flex: 0 0 auto;
+  padding: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(0, 0, 0, 0.18);
+}
+.adsb-who {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0.7rem 8px 0.7rem;
+  min-width: 0;
+}
+.adsb-who-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--adsb-ink-strong);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.adsb-who-role {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: white;
+}
+.adsb-logout {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffb4b4;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.adsb-logout:hover {
+  background: rgba(220, 38, 38, 0.18);
+  color: #fff;
+}
+.adsb-logout .adsb-ico {
+  color: inherit;
+}
+
+/* ==========================================================================
+   5. Responsive   tiroir sous 1200 px
+   Auparavant la barre était simplement masquée (`d-none d-xl-block`) : plus
+   aucune navigation n'était possible sur tablette ni sur téléphone.
+   ========================================================================== */
+.adsb-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1290;
+  background: rgba(4, 20, 12, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+@media (max-width: 1199.98px) {
+  .adsb {
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+  }
+  .adsb.adsb-open {
+    transform: translateX(0);
+  }
+  .adsb-close {
+    display: flex;
+  }
+}
+
+@media (min-width: 1200px) {
+  /* Le voile n'existe que pour le tiroir : sur grand écran la barre est fixe. */
+  .adsb-backdrop {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   6. Barre réduite (grand écran)
+   La classe `adsb-collapsed` posée sur <html> réduit --adsb-w : l'en-tête
+   (admin-header.css) et le contenu (admin.css) suivent la même variable.
+   ========================================================================== */
+.adsb-collapse {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  :root.adsb-collapsed {
+    --adsb-w: 72px;
+  }
+  .adsb,
+  .adh,
+  .main-wrapper .main-content-wrapper {
+    transition: width 0.2s ease, left 0.2s ease, margin-left 0.2s ease;
+  }
+
+  .adsb-collapse {
+    position: absolute;
+    top: calc(var(--adh-h, 62px) - 13px);
+    right: -13px;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    font-size: 0.75rem;
+    color: #113326;
+    background: #fff;
+    border: 1px solid #d7dee6;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+  }
+  .adsb-collapse:hover {
+    background: #f1f5f9;
+    transform: scale(1.08);
+  }
+
+  /* ---- Contenu réduit : icônes seules ---- */
+  .adsb--compact .adsb-brand {
+    justify-content: center;
+    padding: 0 8px;
+  }
+  .adsb--compact .adsb-brand-link span,
+  .adsb--compact .adsb-section,
+  .adsb--compact .adsb-text,
+  .adsb--compact .adsb-caret,
+  .adsb--compact .adsb-ext,
+  .adsb--compact .adsb-who {
+    display: none;
+  }
+  .adsb--compact .adsb-scroll {
+    padding: 12px 8px;
+    overflow-x: hidden;
+  }
+  .adsb--compact .adsb-link,
+  .adsb--compact .adsb-logout {
+    justify-content: center;
+    gap: 0;
+    padding: 0.7rem 0;
+  }
+  .adsb--compact .adsb-ico {
+    flex: 0 0 auto;
+    font-size: 1.15rem;
+  }
+  /* Groupe contenant la page courante : pastille. */
+  .adsb--compact .adsb-group-btn.has-active::after {
+    content: "";
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #f97316;
+    box-shadow: 0 0 0 2px var(--adsb-bg);
+  }
+  .adsb--compact .adsb-group-btn[aria-expanded="true"] {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--adsb-ink-strong);
+  }
+}
+
+/* ---- Menu flottant (libellé ou sous-entrées) ---- */
+.adsb-flyout {
+  position: fixed;
+  left: calc(var(--adsb-w) + 8px);
+  z-index: 1200;
+  min-width: 200px;
+  max-width: 280px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.2);
+  animation: adsb-fly 0.12s ease-out;
+}
+/* Pont invisible entre la barre et le menu : le survol n'est pas interrompu. */
+.adsb-flyout::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -12px;
+  width: 12px;
+}
+.adsb-flyout-label {
+  padding: 6px 10px;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+}
+.adsb-flyout-title {
+  padding: 6px 10px 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+.adsb-flyout-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.adsb-flyout-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  font-size: 0.83rem;
+  font-weight: 500;
+  color: #0f172a;
+  text-decoration: none;
+  border-radius: 8px;
+}
+.adsb-flyout-link i {
+  color: #64748b;
+}
+.adsb-flyout-link:hover,
+.adsb-flyout-link:focus-visible {
+  background: #f1f5f9;
+  color: #0f172a;
+  outline: none;
+}
+.adsb-flyout-link.active {
+  background: #113326;
+  color: #fff;
+  font-weight: 700;
+}
+.adsb-flyout-link.active i {
+  color: #fff;
+}
+@keyframes adsb-fly {
+  from { opacity: 0; transform: translateX(-4px); }
+  to { opacity: 1; transform: none; }
+}
+@media (max-width: 1199.98px) {
+  .adsb-flyout { display: none; }
+}
+
+/* ==========================================================================
+   7. Accessibilité
+   ========================================================================== */
+.adsb-link:focus-visible,
+.adsb-logout:focus-visible,
+.adsb-close:focus-visible,
+.adsb-collapse:focus-visible {
+  outline: 2px solid var(--adsb-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adsb,
+  .adsb-link,
+  .adsb-logout,
+  .adsb-caret,
+  .adsb-ico,
+  .adh,
+  .main-wrapper .main-content-wrapper,
+  .adsb-collapse {
+    transition: none;
+  }
+  .adsb-flyout {
+    animation: none;
+  }
+}

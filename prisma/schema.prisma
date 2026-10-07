@@ -1,0 +1,1157 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Document {
+  id   Int           @id @default(autoincrement())
+  code String        @unique
+  type DocumentType?
+  path String        @db.Text
+
+  observations Observation[]
+  offers       Offer[]
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  monitorings Monitoring[]
+}
+
+model Profile {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique
+  name        String
+  description String? @db.Text
+
+  users User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Feature {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique
+  name        String
+  description String? @db.Text
+
+  users User[] @relation("UserFeature")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  code         String   @unique
+  lastName     String?
+  firstName    String
+  email        String   @unique
+  password     String
+  phone        String?
+  imagePath    String?
+  status       Status   @default(DISABLE)
+  confirmToken String?
+  confirmNotif Boolean?
+  description  String?  @db.Text
+
+  // Date du dernier changement de mot de passe par l utilisateur lui-meme.
+  // NULL = le compte utilise encore le mot de passe provisoire attribue a la
+  // creation : la plateforme impose alors un changement a la connexion.
+  passwordChangedAt DateTime?
+
+  profileId Int
+  profile   Profile @relation(fields: [profileId], references: [id])
+
+  notifications  Notification[]    @relation("UserNotification")
+  restorPassword RestorePassword[]
+
+  focalPoint FocalPoint?
+  features   Feature[]   @relation("UserFeature")
+  offers     Offer[]
+
+  submissionCodes SubmissionCode[]
+
+  // Workflow de validation : decisions prises et actions tracees.
+  validationDecisions ValidationDecision[]
+  auditLogs           AuditLog[]
+
+  // Assistant IA : analyses demandees, courriers rediges, base documentaire, conversations.
+  aiAnalyses             OfferAiAnalysis[]
+  offerLetters           OfferLetter[]
+  knowledgeDocuments     KnowledgeDocument[]
+  assistantConversations AssistantConversation[]
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  monitorings Monitoring[]
+
+  @@index([profileId])
+}
+
+// Code de validation a usage unique exige avant la soumission definitive d une
+// offre par un point focal.
+//
+// Le code en clair n est JAMAIS conserve : seule son empreinte SHA-256 est
+// stockee, de sorte qu une lecture de la base ne permette pas de soumettre a la
+// place du point focal. La ligne porte toute la tracabilite demandee :
+// generation, envoi, tentatives, validation, consommation, auteur.
+model SubmissionCode {
+  id      Int    @id @default(autoincrement())
+  code    String @unique // identifiant technique de la ligne (SUB-...)
+  purpose String @default("OFFER_SUBMISSION")
+
+  // Empreinte du code a 6 chiffres communique par e-mail.
+  codeHash  String
+  // Reference metier couverte par le code (code de l offre a soumettre).
+  reference String?
+  // Intitule de l offre, conserve pour la piste d audit.
+  label     String?
+  // Adresse reellement destinataire de l e-mail (resolue cote serveur).
+  email     String
+
+  attempts    Int @default(0)
+  maxAttempts Int @default(5)
+
+  sentAt      DateTime? // generation / dernier envoi
+  expiresAt   DateTime
+  validatedAt DateTime? // saisie correcte du code
+  consumedAt  DateTime? // offre effectivement enregistree
+
+  // Jeton remis apres validation : c est lui, et non le code, qui autorise
+  // l enregistrement de l offre. A usage unique.
+  ticket String? @unique
+
+  ip String?
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  // Renseigne une fois l offre creee : trace du lien code -> offre soumise.
+  offerId Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, purpose, reference])
+}
+
+model Notification {
+  id      Int      @id @default(autoincrement())
+  code    String   @unique
+  from    String?
+  content String?  @db.Text
+  status  Status?
+  read    Boolean? @default(false)
+
+  // Categorie fonctionnelle (OFFER_DECLARED, OFFER_VALIDATED, ...) : sert au
+  // pictogramme et au filtrage cote interface.
+  type  String?
+  // Titre court affiche en tete de la notification.
+  title String?
+  // Route interne vers laquelle la notification renvoie (facultatif).
+  link  String?
+
+  to User[] @relation("UserNotification")
+
+  // Offre concernee par la notification (workflow). SetNull : une offre
+  // supprimee ne doit pas faire disparaitre la trace de la notification.
+  offerId Int?
+  offer   Offer?    @relation(fields: [offerId], references: [id], onDelete: SetNull)
+  // Date de lecture ; `read` est conserve pour la compatibilite de l existant.
+  readAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([offerId])
+}
+
+model RestorePassword {
+  id    Int     @id @default(autoincrement())
+  code  String  @unique
+  token String?
+
+  userId Int? // Clé étrangère vers District
+  user   User? @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Operator {
+  id          Int          @id @default(autoincrement())
+  code        String       @unique
+  name        String
+  color       String
+  type        OperatorType
+  imagePath   String?      @db.Text
+  status      Status?
+  description String?      @db.Text
+
+  offers      Offer[]
+  focalPoints FocalPoint[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FocalPoint {
+  id           Int     @id @default(autoincrement())
+  code         String  @unique
+  serialNumber String
+  status       Status?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId       Int           @unique
+  user         User          @relation(fields: [userId], references: [id])
+  operatorId   Int
+  operator     Operator      @relation(fields: [operatorId], references: [id])
+  observations Observation[]
+
+  @@index([operatorId])
+}
+
+model Observation {
+  id      Int     @id @default(autoincrement())
+  code    String  @unique
+  content String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  documentd    Document[]
+  focalPointId Int
+  focalPoint   FocalPoint @relation(fields: [focalPointId], references: [id])
+}
+
+model Offer {
+  id          Int           @id @default(autoincrement())
+  code        String        @unique
+  title       String
+  notifiDate  DateTime
+  desiredDate DateTime
+  billingType BillingType
+  category    OfferCategory
+  target      String?       @db.Text
+  status      OfferStatus?
+  link        String?
+  partner     String?
+  description String?       @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id])
+  operatorId Int
+  operator   Operator  @relation(fields: [operatorId], references: [id])
+  areaId     Int?
+  area       Area?     @relation(fields: [areaId], references: [id])
+  documentId Int?
+  document   Document? @relation(fields: [documentId], references: [id])
+
+  validation Validation?
+
+  profiles         ProfileOffer[]
+  accessModes      AccessMode[]
+  reviews          Review[]
+  like             Like[]
+  control          OfferControl[]
+  specialPromotion SpecialPromotion?
+  monitorings      Monitoring[]
+  formulas         OfferFormula[]
+  // validation       Validation[]
+
+  parentId Int? // clé étrangère optionnelle
+  parent   Offer?  @relation("OfferHierarchy", fields: [parentId], references: [id])
+  children Offer[] @relation("OfferHierarchy")
+
+  // ---- Workflow de validation (source de verite) ---------------------------
+  // `status` et `validation.status` restent tenus a jour par le moteur de
+  // workflow pour la compatibilite de l existant (comparateur, statistiques).
+  workflowStatus         OfferWorkflowStatus @default(DRAFT)
+  // Niveau de validateur attendu (1 a 4) ; null hors validation.
+  currentValidationLevel Int?
+  submittedAt            DateTime?
+  validatedAt            DateTime?
+  refusedAt              DateTime?
+  deactivatedAt          DateTime?
+  deactivationReason     DeactivationReason?
+  deactivatedById        Int?
+
+  // ---- Versionnage par monitoring ------------------------------------------
+  // Distinct de `parent` (offre de base -> offres derivees) : `sourceOffer`
+  // designe la version precedente de la MEME offre.
+  version       Int     @default(1)
+  sourceOfferId Int?
+  sourceOffer   Offer?  @relation("OfferVersions", fields: [sourceOfferId], references: [id])
+  versions      Offer[] @relation("OfferVersions")
+
+  decisions     ValidationDecision[]
+  auditLogs     AuditLog[]
+  // Analyses IA conservees et courriers au soumissionnaire.
+  aiAnalyses    OfferAiAnalysis[]
+  letters       OfferLetter[]
+  notifications Notification[]
+
+  @@index([workflowStatus, currentValidationLevel])
+  @@index([sourceOfferId])
+  @@index([operatorId])
+  @@index([areaId])
+  @@index([userId])
+  @@index([parentId])
+  @@index([desiredDate])
+  @@index([notifiDate])
+  @@index([status])
+}
+
+model ProfileOffer {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique
+  name        String
+  description String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Offer        Offer[]
+  monitoring   Monitoring? @relation(fields: [monitoringId], references: [id])
+  monitoringId Int?
+}
+
+model SpecialPromotion {
+  id       Int       @id @default(autoincrement())
+  code     String    @unique
+  type     PromoType
+  duration Float
+
+  offerId Int   @unique
+  offer   Offer @relation(fields: [offerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AccessMode {
+  id      Int     @id @default(autoincrement())
+  code    String  @unique
+  content String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  offerId Int
+  offer   Offer @relation(fields: [offerId], references: [id])
+
+  @@index([offerId])
+}
+
+model MonitoringAccessMode {
+  id      Int     @id @default(autoincrement())
+  code    String  @unique
+  content String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  monitoringId Int
+  monitoring   Monitoring @relation(fields: [monitoringId], references: [id])
+}
+
+model Area {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
+  title       AreaType
+  description String?  @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  offers            Offer[]
+  areaOrganizations AreaOrganization[]
+  Organization      Organization[]
+  monitorings       Monitoring[]
+}
+
+model MainOrganization {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique
+  name        String
+  description String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organizations Organization[]
+}
+
+model Organization {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique
+  name        String
+  description String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  areaId Int
+  area   Area @relation(fields: [areaId], references: [id])
+
+  parentId   Int? // clé étrangère optionnelle
+  parent     Organization?      @relation("OrganizationHierarchy", fields: [parentId], references: [id])
+  children   Organization[]     @relation("OrganizationHierarchy")
+  parentOrgs MainOrganization[]
+
+  countries         Country[]
+  areaOrganizations AreaOrganization[]
+  // La relation directe Organization <-> OrganisationCountry est retirée :
+  // les pays sont désormais rattachés à l'AreaOrganization (zone + organisation).
+
+  @@index([areaId])
+}
+
+model AreaOrganization {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  areaId Int
+  area   Area @relation(fields: [areaId], references: [id])
+
+  organizationId Int
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  // Pays retenus POUR CETTE zone et CETTE organisation
+  organisationCountries OrganisationCountry[]
+}
+
+model Country {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique
+  name        String
+  indicator   Int?
+  description String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organizations Organization[]
+
+  organisationCountries OrganisationCountry[]
+}
+
+model OrganisationCountry {
+  id Int @id @default(autoincrement())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // CORRECTION: cette clé contenait déjà un identifiant d'AreaOrganization
+  // (c'est ce qu'enregistre `saveArea`), mais la relation pointait vers
+  // `Organization` -> les pays étaient rattachés à la mauvaise organisation.
+  areaOrganisationId Int
+  areaOrganisation   AreaOrganization @relation(fields: [areaOrganisationId], references: [id])
+
+  countryId Int
+  country   Country @relation(fields: [countryId], references: [id])
+}
+
+model Like {
+  id     Int      @id @default(autoincrement())
+  code   String   @unique
+  type   LikeType
+  number Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  offerId      Int
+  offer        Offer       @relation(fields: [offerId], references: [id])
+  monitoring   Monitoring? @relation(fields: [monitoringId], references: [id])
+  monitoringId Int?
+}
+
+model FormulaAdvantage {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique
+  title       String
+  description String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  formulaId Int
+  formula   OfferFormula @relation(fields: [formulaId], references: [id])
+
+  @@index([formulaId])
+}
+
+model OfferFormula {
+  id       Int    @id @default(autoincrement())
+  code     String @unique
+  title    String
+  validity Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  offerId Int
+  offer   Offer       @relation(fields: [offerId], references: [id])
+  price   OfferPrice?
+
+  serviceDetail OfferServiceDetail[]
+  OfferControl  OfferControl[]
+  advantages    FormulaAdvantage[]
+
+  parentId Int? // clé étrangère optionnelle
+  parent   OfferFormula?  @relation("FormulaHierarchy", fields: [parentId], references: [id])
+  children OfferFormula[] @relation("FormulaHierarchy")
+
+  @@index([offerId])
+  @@index([parentId])
+}
+
+model OfferPrice {
+  id    Int    @id @default(autoincrement())
+  code  String @unique
+  value Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  formulaId Int          @unique
+  formula   OfferFormula @relation(fields: [formulaId], references: [id])
+}
+
+model OfferServiceDetail {
+  id           Int          @id @default(autoincrement())
+  code         String       @unique
+  quantity     Float
+  billingSteps Float?
+  comtype      FormulaType?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  formulaId Int
+  formula   OfferFormula @relation(fields: [formulaId], references: [id])
+  serviceId Int
+  service   Service      @relation(fields: [serviceId], references: [id])
+
+  offerRate OfferRate?
+
+  @@index([formulaId])
+  @@index([serviceId])
+}
+
+model OfferRate {
+  id    Int    @id @default(autoincrement())
+  code  String @unique
+  value Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  serviceDetailId Int                @unique
+  serviceDetail   OfferServiceDetail @relation(fields: [serviceDetailId], references: [id])
+}
+
+model Service {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique
+  title       String
+  description String? @db.Text
+  status      Status
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  offerServiceDetail      OfferServiceDetail[]
+  monitoringServiceDetail MonitoringServiceDetail[]
+}
+
+model OfferControl {
+  id              Int      @id @default(autoincrement())
+  code            String   @unique
+  appliedRate     Float
+  observationDate DateTime
+  description     String?  @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  offerId   Int
+  offer     Offer        @relation(fields: [offerId], references: [id])
+  formulaId Int
+  formula   OfferFormula @relation(fields: [formulaId], references: [id])
+}
+
+model Validation {
+  id         Int              @id @default(autoincrement())
+  code       String           @unique
+  launchDate DateTime?
+  status     ValidationStatus
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comments Comment[]
+
+  offerId Int   @unique
+  offer   Offer @relation(fields: [offerId], references: [id])
+}
+
+model MonitoringValidation {
+  id         Int              @id @default(autoincrement())
+  code       String           @unique
+  launchDate DateTime?
+  status     ValidationStatus
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comments MonitoringComment[]
+
+  monitoringId Int        @unique
+  monitoring   Monitoring @relation(fields: [monitoringId], references: [id])
+}
+
+model Comment {
+  id      Int         @id @default(autoincrement())
+  code    String      @unique
+  type    ContentType
+  content String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  validationId Int
+  validation   Validation @relation(fields: [validationId], references: [id])
+}
+
+model MonitoringComment {
+  id      Int         @id @default(autoincrement())
+  code    String      @unique
+  type    ContentType
+  content String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  monitoringValidationId Int
+  monitoringValidation   MonitoringValidation @relation(fields: [monitoringValidationId], references: [id])
+}
+
+model MonitoringPeriod {
+  id    Int    @id @default(autoincrement())
+  code  String @unique
+  value Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  monitoringId Int        @unique
+  monitoring   Monitoring @relation(fields: [monitoringId], references: [id])
+}
+
+model Monitoring {
+  id          Int              @id @default(autoincrement())
+  code        String           @unique
+  title       String
+  notifiDate  DateTime
+  desiredDate DateTime
+  billingType BillingType
+  category    OfferCategory
+  target      String
+  status      ValidationStatus
+  link        String?
+  partner     String?
+  description String?          @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  offerId     Int
+  offer       Offer                  @relation(fields: [offerId], references: [id])
+  areaId      Int?
+  area        Area?                  @relation(fields: [areaId], references: [id])
+  accessModes MonitoringAccessMode[]
+  documentId  Int?
+  document    Document?              @relation(fields: [documentId], references: [id])
+  ownerId     Int
+  owner       User                   @relation(fields: [ownerId], references: [id])
+
+  specialPromotion  MonitoringPromotion?
+  monitoringFormula MonitoringFormula[]
+  monitoringControl MonitoringControl[]
+  validation        MonitoringValidation?
+
+  profiles ProfileOffer[]
+  reviews  Review[]
+  like     Like[]
+
+  parentId Int? // clé étrangère optionnelle
+  parent   Monitoring?  @relation("MonitoringOfferHierarchy", fields: [parentId], references: [id])
+  children Monitoring[] @relation("MonitoringOfferHierarchy")
+
+  monitoringPeriod MonitoringPeriod?
+
+  @@index([offerId])
+}
+
+model MonitoringPromotion {
+  id       Int       @id @default(autoincrement())
+  code     String    @unique
+  type     PromoType
+  duration Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  monitoringId Int        @unique
+  monitoring   Monitoring @relation(fields: [monitoringId], references: [id])
+}
+
+model MonitoringFormula {
+  id       Int    @id @default(autoincrement())
+  code     String @unique
+  title    String
+  validity Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  monitoringId Int
+  monitoring   Monitoring       @relation(fields: [monitoringId], references: [id])
+  price        MonitoringPrice?
+
+  serviceDetail     MonitoringServiceDetail[]
+  monitoringControl MonitoringControl[]
+
+  parentId Int? // clé étrangère optionnelle
+  parent   MonitoringFormula?  @relation("MonitoringFormulaHierarchy", fields: [parentId], references: [id])
+  children MonitoringFormula[] @relation("MonitoringFormulaHierarchy")
+
+  advantages MonitoringAdvantage[]
+}
+
+model MonitoringPrice {
+  id    Int    @id @default(autoincrement())
+  code  String @unique
+  value Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  monitoringId Int               @unique
+  formula      MonitoringFormula @relation(fields: [monitoringId], references: [id])
+}
+
+model MonitoringServiceDetail {
+  id           Int          @id @default(autoincrement())
+  code         String       @unique
+  quantity     Float
+  billingSteps Float?
+  comtype      FormulaType?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  formulaId      Int
+  formula        MonitoringFormula @relation(fields: [formulaId], references: [id])
+  serviceId      Int
+  service        Service           @relation(fields: [serviceId], references: [id])
+  monitoringRate MonitoringRate?
+}
+
+model MonitoringControl {
+  id              Int      @id @default(autoincrement())
+  code            String   @unique
+  appliedRate     Float
+  observationDate DateTime
+  description     String?  @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  monitoringId        Int
+  monitoring          Monitoring        @relation(fields: [monitoringId], references: [id])
+  monitoringFormulaId Int
+  monitoringFormula   MonitoringFormula @relation(fields: [monitoringFormulaId], references: [id])
+}
+
+model MonitoringAdvantage {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique
+  title       String
+  description String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  monitoringFormulaId Int
+  monitoringFormula   MonitoringFormula @relation(fields: [monitoringFormulaId], references: [id])
+}
+
+model MonitoringRate {
+  id    Int    @id @default(autoincrement())
+  code  String @unique
+  value Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  serviceDetailId Int                     @unique
+  serviceDetail   MonitoringServiceDetail @relation(fields: [serviceDetailId], references: [id])
+}
+
+model Review {
+  id      Int    @id @default(autoincrement())
+  code    String @unique
+  comment String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  offerId      Int
+  offer        Offer       @relation(fields: [offerId], references: [id])
+  monitoring   Monitoring? @relation(fields: [monitoringId], references: [id])
+  monitoringId Int?
+}
+
+model Download {
+  id   Int          @id @default(autoincrement())
+  code String       @unique
+  type TypeDownload
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Decision d un validateur a un niveau donne. Historique complet et immuable :
+// chaque niveau franchi, chaque refus, avec son auteur et son commentaire.
+model ValidationDecision {
+  id          Int                    @id @default(autoincrement())
+  level       Int
+  decision    ValidationDecisionType
+  // Validation intermediaire transmise au niveau superieur.
+  transmitted Boolean                @default(false)
+  // Validation definitive (dernier niveau applicable au type d offre).
+  final       Boolean                @default(false)
+  comment     String                 @db.Text
+  // Role au moment de la decision (le profil de l utilisateur peut changer).
+  userRole    String
+
+  offerId Int
+  offer   Offer @relation(fields: [offerId], references: [id])
+  userId  Int
+  user    User  @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([offerId, level])
+}
+
+// Journal d audit. Aucune route ne permet de modifier ou de supprimer une ligne.
+model AuditLog {
+  id         Int     @id @default(autoincrement())
+  action     String
+  entityType String  @default("OFFER")
+  entityId   Int?
+  actorRole  String?
+  fromStatus String?
+  toStatus   String?
+  level      Int?
+  comment    String? @db.Text
+  metadata   Json?
+
+  // SetNull : la trace survit a la suppression (exceptionnelle) de l offre.
+  offerId Int?
+  offer   Offer? @relation(fields: [offerId], references: [id], onDelete: SetNull)
+  actorId Int?
+  actor   User?  @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([offerId, createdAt])
+  @@index([entityType, entityId])
+}
+
+// Analyse IA d une offre, CONSERVEE. La plus recente fait reference pour tous
+// les niveaux de validation ; une nouvelle analyse (demandee volontairement)
+// s ajoute sans effacer les precedentes.
+model OfferAiAnalysis {
+  id         Int     @id @default(autoincrement())
+  content    String  @db.Text
+  // Texte de l offre soumis au service d analyse (tracabilite de ce qui a ete analyse).
+  input      String? @db.Text
+  // Niveau de validation attendu au moment de l analyse.
+  level      Int?
+  durationMs Int?
+
+  offerId       Int
+  offer         Offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  requestedById Int?
+  requestedBy   User? @relation(fields: [requestedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([offerId, createdAt])
+}
+
+// Courrier adresse au soumissionnaire d une offre (modele genere puis redige).
+model OfferLetter {
+  id      Int    @id @default(autoincrement())
+  subject String
+  html    String @db.Text
+  // DRAFT | SENT
+  status  String @default("DRAFT")
+  sentAt  DateTime?
+  sentTo  String?
+
+  offerId  Int
+  offer    Offer @relation(fields: [offerId], references: [id], onDelete: Cascade)
+  authorId Int?
+  author   User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([offerId, updatedAt])
+}
+
+// Base documentaire de l Assistant IA ARTCI : textes de reference (lois,
+// decrets, decisions...) decoupes en passages interrogeables.
+model KnowledgeDocument {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique
+  title       String
+  // LAW | DECREE | ORDER | DECISION | REGULATION | REFERENTIAL | OTHER
+  kind        String    @default("OTHER")
+  // Numero ou reference officielle (ex. « Decision n° 2024-1098 »).
+  reference   String?
+  issuedAt    DateTime?
+  // Texte en vigueur : seuls ces documents sont interroges.
+  inForce     Boolean   @default(true)
+  sourceName  String?
+  description String?   @db.Text
+  charCount   Int       @default(0)
+
+  chunks      KnowledgeChunk[]
+  createdById Int?
+  createdBy   User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([kind, inForce])
+}
+
+// Passage d un document. La recherche plein texte (francais) s appuie sur un
+// index GIN cree par la migration (expression non descriptible ici).
+model KnowledgeChunk {
+  id       Int     @id @default(autoincrement())
+  position Int
+  // Titre de section ou d article le plus proche (« Article 12 », « Chapitre II »...).
+  heading  String?
+  content  String  @db.Text
+
+  documentId Int
+  document   KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId, position])
+}
+
+// Conversations des assistants conserves cote serveur (Assistant IA ARTCI).
+model AssistantConversation {
+  id        Int    @id @default(autoincrement())
+  // ARTCI (assistant reglementaire) ; reserve pour d autres assistants.
+  assistant String @default("ARTCI")
+  title     String
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  messages AssistantMessage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, assistant, updatedAt])
+}
+
+model AssistantMessage {
+  id      Int    @id @default(autoincrement())
+  // user | assistant
+  role    String
+  content String @db.Text
+  // Passages cites : [{ documentId, title, reference, heading, excerpt, chunkId }]
+  sources Json?
+  // GENERATED (redige par le moteur) | EXTRACTIVE (passages seuls) | NO_SOURCE
+  mode    String?
+
+  conversationId Int
+  conversation   AssistantConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+model History {
+  id          Int     @id @default(autoincrement())
+  title       String  @unique
+  description String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//ENUMERATION
+
+enum DocumentType {
+  IMAGE
+  XLSX
+  CSV
+  PDF
+  KML
+  GEOJSON
+}
+
+enum Status {
+  ENABLE
+  DISABLE
+  PENDING
+  SUSPENDED
+}
+
+enum OperatorType {
+  MOBILE
+  FIXE
+  HYBRIDE
+}
+
+enum OfferWorkflowStatus {
+  DRAFT
+  SUBMITTED
+  IN_VALIDATION
+  VALIDATED
+  REFUSED
+  DEACTIVATED
+}
+
+enum ValidationDecisionType {
+  VALIDATED
+  REFUSED
+}
+
+enum DeactivationReason {
+  MANUAL
+  MONITORING
+}
+
+enum OfferStatus {
+  PENDING
+  DONE
+}
+
+enum ValidationStatus {
+  PENDING
+  ALLOW
+  DINIED
+  SUSPENDED
+}
+
+enum TypeDownload {
+  XLSX
+  CSV
+  PDF
+  KML
+  GEOJSON
+}
+
+enum BillingType {
+  PREPAID
+  POSTPAID
+  HYBRID
+}
+
+enum LikeType {
+  LIKED
+  LOVED
+  UNLIKED
+}
+
+enum ServiceType {
+  NUMBER
+  STRING
+}
+
+enum ContentType {
+  AUTO
+  BYHAND
+  MAIL
+}
+
+enum PeriodType {
+  DAY
+  WEEK
+  MONTH
+  YEAR
+}
+
+enum PromoType {
+  FLASH
+  PERIOD
+  SPECIAL
+  CUSTOMIZE
+}
+
+enum OfferCategory {
+  MOBILE
+  FIXE
+}
+
+enum AreaType {
+  NATIONAL
+  INTERNATIONAL
+  ROAMING
+}
+
+enum FormulaType {
+  ON_NET
+  OFF_NET
+  ALL_NET
+}
+
+/// Inscriptions à la lettre d'information publique.
+/// L'appel à l'action existait sur le site sans aucun traitement : les
+/// adresses saisies étaient perdues.
+model NewsletterSubscription {
+  id     Int     @id @default(autoincrement())
+  email  String  @unique
+  active Boolean @default(true)
+  /// Jeton de désinscription (lien « se désabonner »).
+  token  String  @unique
+  source String? // page d'origine
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  unsubscribedAt DateTime?
+
+  @@index([active, createdAt])
+}

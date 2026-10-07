@@ -1,0 +1,232 @@
+/* ==========================================================================
+   CompareTIC   Processus de VALIDATION des offres
+   --------------------------------------------------------------------------
+   Couvre les dialogues de décision (valider / refuser / suspendre) et les
+   éléments propres au parcours de validation.
+   Les <Dialog> PrimeReact sont rendus dans un portail : les styles sont donc
+   préfixés par `.valid-dialog` (posée sur le Dialog) ou par des classes
+   dédiées `valid-*`, sans dépendre de l'arbre DOM.
+   ========================================================================== */
+
+.valid-dialog {
+  --vd-ink: #0f172a;
+  --vd-muted: #64748b;
+  --vd-border: #e5e9f0;
+  --vd-soft: #f7f9fc;
+  --vd-green: #0e9f46;
+  --vd-orange: #f57c00;
+  --vd-red: #dc2626;
+  --vd-accent: #2563eb;
+}
+
+/* ---------- Chrome du dialogue ---------- */
+.valid-dialog.p-dialog {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.32);
+}
+.valid-dialog .p-dialog-header {
+  color: #fff !important;
+  padding: 14px 20px !important;
+  border: none;
+  background: linear-gradient(110deg, #1f2937, #0f172a) !important;
+}
+.valid-dialog .p-dialog-header .p-dialog-title,
+.valid-dialog .p-dialog-header h5,
+.valid-dialog .p-dialog-header .p-dialog-header-icon {
+  color: #fff !important;
+  font-weight: 700;
+}
+/* Couleur d'accent par type de décision */
+.valid-dialog--suspend .p-dialog-header {
+  background: linear-gradient(110deg, #b45309, #f57c00) !important;
+}
+.valid-dialog .p-dialog-content {
+  background: #fff;
+  padding: 1.1rem 1.25rem !important;
+}
+.valid-dialog .p-dialog-footer {
+  background: var(--vd-soft);
+  border-top: 1px solid var(--vd-border);
+  padding: 12px 16px;
+}
+
+/* ---------- Corps ---------- */
+.valid-dialog__body {
+  color: var(--vd-ink);
+}
+.valid-dialog__label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+/* Encart d'information / avertissement */
+.valid-dialog__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.valid-dialog__notice > i {
+  font-size: 1.3rem;
+  line-height: 1;
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+.valid-dialog__notice p {
+  font-size: 0.86rem;
+  color: var(--vd-muted);
+}
+.valid-dialog__notice--warning {
+  background: #fff7e8;
+  border: 1px solid #ffdfaa;
+  color: #7a4b06;
+}
+.valid-dialog__notice--warning > i {
+  color: var(--vd-orange);
+}
+
+/* Date de mise en ligne autorisée */
+.valid-dialog__launch {
+  background: #fff;
+  border: 1px solid var(--vd-border);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  margin-bottom: 0.85rem;
+}
+.valid-dialog__launch label {
+  display: block;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--vd-ink);
+  margin-bottom: 0.35rem;
+}
+.valid-dialog__launch input {
+  max-width: 260px;
+  border-radius: 8px;
+  border: 1px solid var(--vd-border);
+}
+.valid-dialog__launch input:focus {
+  border-color: var(--vd-green);
+  box-shadow: 0 0 0 3px rgba(14, 159, 70, 0.18);
+}
+.valid-dialog__launch small {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.76rem;
+  color: var(--vd-muted);
+}
+
+/* ---------- Boutons ---------- */
+.valid-dialog .btn {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: transform 0.12s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.valid-dialog .btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.valid-dialog .btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.99);
+}
+.valid-dialog .btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+/* On évite les boutons démesurés hérités (`p-5`) */
+.valid-dialog .btn.p-5 {
+  padding: 0.55rem 1.5rem !important;
+}
+.valid-dialog .btn-warning {
+  background: linear-gradient(135deg, #ffb020, #f57c00);
+  border-color: transparent;
+  color: #fff;
+}
+.valid-dialog .btn-info {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  border-color: transparent;
+  color: #fff;
+}
+
+/* ---------- Éditeur riche ---------- */
+.valid-dialog .p-editor-container .p-editor-toolbar {
+  border-radius: 8px 8px 0 0;
+  border-color: var(--vd-border);
+  background: var(--vd-soft);
+}
+.valid-dialog .p-editor-container .p-editor-content {
+  border-radius: 0 0 8px 8px;
+  border-color: var(--vd-border);
+}
+
+/* ==========================================================================
+   Page de validation : avertissement d'analyse automatique indisponible
+   ========================================================================== */
+.valid-ia__error {
+  display: flex;
+  align-items: center;
+  background: #fff7e8;
+  border: 1px solid #ffdfaa;
+  color: #7a4b06;
+  border-radius: 8px;
+  padding: 0.7rem 0.95rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+.valid-ia__error > i {
+  color: #f57c00;
+  font-size: 1.1rem;
+}
+
+/* ---------- Accessibilité ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .valid-dialog .btn {
+    transition: none !important;
+  }
+  .valid-dialog .btn:hover:not(:disabled),
+  .valid-dialog .btn:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .valid-dialog .p-dialog-footer .d-flex {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .valid-dialog .p-dialog-footer .btn {
+    width: 100%;
+  }
+  .valid-dialog__launch input {
+    max-width: 100%;
+  }
+}
+
+/* ---- Analyse IA conservée : origine, actions à la demande, historique -------- */
+.rv-ai-meta {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f1f8f4;
+  color: #1f5a37;
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+.rv-ai-meta .bi { margin-top: 1px; }
+.rv-ai-running { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 0.8rem; color: #475569; }
+.rv-ai-empty { display: flex; gap: 12px; align-items: flex-start; padding: 6px 0 2px; font-size: 0.86rem; }
+.rv-ai-empty > .bi { font-size: 1.5rem; color: #94a3b8; }
+.rv-ai-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.rv-ai-history { margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e2e8f0; font-size: 0.8rem; }
+.rv-ai-history ul { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 4px; }

@@ -1,0 +1,288 @@
+/* ==========================================================================
+   Statistiques détaillées   page dédiée /admin-statistics
+   pages/admin/admin/statistics/AdminStatisticsModernPage.jsx
+   ========================================================================== */
+
+.sts {
+  --sts-border: #e2e8f0;
+  --sts-muted: #64748b;
+  --sts-ink: #0f172a;
+  --sts-bg: #f8fafc;
+  --sts-accent: #03832e;
+  color: var(--sts-ink);
+}
+
+.sts-head { margin-bottom: 14px; }
+.sts-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.sts-sub {
+  margin: 3px 0 0;
+  font-size: 0.82rem;
+  color: var(--sts-muted);
+}
+
+/* ---- Filtres ------------------------------------------------------------ */
+
+.sts-filters {
+  background: #fff;
+  border: 1px solid var(--sts-border);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+.sts-filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+.sts-field label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sts-muted);
+  margin-bottom: 5px;
+}
+.sts-field .form-control,
+.sts-field .form-select {
+  font-size: 0.86rem;
+  border-color: #d8e0e8;
+  border-radius: 8px;
+}
+.sts-field .p-multiselect {
+  width: 100% !important;
+  border-radius: 8px;
+  border-color: #d8e0e8;
+}
+.sts-field--actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.sts-btn {
+  border: 1px solid #d8e0e8;
+  background: #fff;
+  color: #3f5164;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.sts-btn:hover { background: #f5f8fa; }
+.sts-btn--accent {
+  background: var(--sts-accent);
+  border-color: var(--sts-accent);
+  color: #fff;
+}
+.sts-btn--accent:hover { background: #026d26; }
+
+/* ---- Indicateurs -------------------------------------------------------- */
+
+.sts-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.sts-kpi {
+  background: #fff;
+  border: 1px solid var(--sts-border);
+  border-top: 3px solid var(--sts-kpi-color, var(--sts-accent));
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+.sts-kpi-value { font-size: 1.5rem; font-weight: 800; line-height: 1.05; }
+.sts-kpi-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sts-muted);
+  margin-top: 4px;
+}
+.sts-kpi-hint { font-size: 0.68rem; color: #94a3b8; margin-top: 2px; }
+
+/* ---- Proportion base / promotionnelle ----------------------------------- */
+
+.sts-split {
+  background: #fff;
+  border: 1px solid var(--sts-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+.sts-split-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--sts-muted);
+  margin-bottom: 8px;
+}
+.sts-split-head b { color: var(--sts-ink); }
+.sts-split-bar {
+  display: flex;
+  height: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+.sts-split-part { transition: width 0.3s ease; }
+
+/* ---- Panneaux et graphiques --------------------------------------------- */
+
+.sts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+/* Les quatre répartitions circulaires tiennent sur une ligne en grand écran. */
+.sts-grid--quarters {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.sts-panel {
+  background: #fff;
+  border: 1px solid var(--sts-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.sts-panel--wide { grid-column: 1 / -1; }
+.sts-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--sts-border);
+  background: var(--sts-bg);
+}
+.sts-panel-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  /* text-transform: uppercase; */
+  letter-spacing: 0.04em;
+}
+.sts-panel-sub { font-size: 0.72rem; color: var(--sts-muted); }
+.sts-panel-body { padding: 14px; }
+
+/* Hauteur fixe : sans elle, chart.js grandit indéfiniment dans un conteneur
+   flexible et la page ne cesse de s'étirer. */
+.sts-chart { position: relative; height: 260px; }
+.sts-chart--wide { height: 320px; }
+.sts-chart canvas { max-width: 100%; }
+
+.sts-nodata {
+  text-align: center;
+  padding: 40px 10px;
+  color: var(--sts-muted);
+  font-size: 0.83rem;
+}
+
+/* ---- Tableau par opérateur ---------------------------------------------- */
+
+.sts-table-wrap { overflow-x: auto; }
+.sts-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+.sts-table th,
+.sts-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #eef2f6;
+  text-align: left;
+  white-space: nowrap;
+}
+.sts-table th {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sts-muted);
+  font-weight: 700;
+}
+.sts-table td.num,
+.sts-table th.num { text-align: right; }
+.sts-table tbody tr:hover { background: #fafcfd; }
+.sts-table tbody tr:last-child td { border-bottom: 0; }
+
+.sts-oper { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.sts-oper img {
+  width: 24px;
+  height: 24px;
+  /* border-radius: 50%; */
+  object-fit: cover;
+  background: #fff;
+  border: 1px solid var(--sts-border);
+}
+
+.sts-share {
+  position: relative;
+  min-width: 90px;
+  height: 18px;
+  background: #f1f5f9;
+  border-radius: 0px;
+  overflow: hidden;
+}
+.sts-share-fill { position: absolute; inset: 0 auto 0 0; opacity: 0.28; }
+.sts-share span {
+  position: relative;
+  display: block;
+  line-height: 18px;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* ---- États -------------------------------------------------------------- */
+
+.sts-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: var(--sts-muted);
+  font-size: 0.86rem;
+}
+.sts-empty {
+  text-align: center;
+  padding: 44px 20px;
+  background: #fff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  color: var(--sts-muted);
+}
+.sts-empty i {
+  font-size: 34px;
+  color: #cbd5e1;
+  display: block;
+  margin-bottom: 10px;
+}
+.sts-empty-title { font-size: 0.95rem; font-weight: 700; color: var(--sts-ink); }
+.sts-empty-text { font-size: 0.83rem; margin-top: 4px; }
+
+/* Rechargement des sections détaillées quand les filtres changent. */
+.sts-is-loading { opacity: 0.55; transition: opacity 0.2s ease; pointer-events: none; }
+
+/* ---- Maille de l'évolution (semaine / mois / année) --------------------- */
+.sts-panel-head { align-items: center; justify-content: space-between; }
+.sts-panel-head-text { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; min-width: 0; }
+.sts-granularity {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 8px;
+  background: #e8edf2;
+  margin-left: auto;
+}
+.sts-granularity button {
+  border: 0;
+  background: transparent;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+}
+.sts-granularity button:hover { color: #0f172a; }
+.sts-granularity button.is-active { background: #fff; color: #03832e; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12); }
+.sts-granularity button:focus-visible { outline: 2px solid #86efac; outline-offset: 1px; }

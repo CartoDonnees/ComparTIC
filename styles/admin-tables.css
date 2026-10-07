@@ -1,0 +1,301 @@
+/* ==========================================================================
+   CompareTIC   Listes & tableaux de l'espace admin / opérateur
+   --------------------------------------------------------------------------
+   Style unifié et professionnel pour toutes les DataTable PrimeReact :
+   utilisateurs, opérateurs, zones, pays, organisations, offres, validation.
+
+   Scopé par `.main-content-wrapper` (le conteneur admin/opérateur) : aucun
+   impact sur le site public.
+
+   Importé après globals.css et admin.css dans pages/_app.js.
+   ========================================================================== */
+
+.main-content-wrapper {
+  --tbl-ink: #0f172a;
+  --tbl-muted: #64748b;
+  --tbl-border: #e6eaf0;
+  --tbl-head: #f7f9fc;
+  --tbl-hover: #f2f7fd;
+  --tbl-accent: #f57c00;
+  --tbl-radius: 8px;
+}
+
+/* ==========================================================================
+   1. Conteneur du tableau
+   ========================================================================== */
+.main-content-wrapper .p-datatable {
+  border: 1px solid var(--tbl-border);
+  border-radius: var(--tbl-radius);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 18px rgba(15, 23, 42, 0.05);
+}
+/* Le padding inline hérité (style={{padding:10}}) est neutralisé */
+.main-content-wrapper .p-datatable > .p-datatable-wrapper {
+  border-radius: 0;
+}
+
+/* ---- Barre d'en-tête (recherche + actions) ---- */
+.main-content-wrapper .p-datatable .p-datatable-header {
+  background: #fff;
+  border: none;
+  border-bottom: 1px solid var(--tbl-border);
+  padding: 0.85rem 1rem;
+}
+
+/* ==========================================================================
+   2. En-tête de colonnes
+   ========================================================================== */
+.main-content-wrapper .p-datatable .p-datatable-thead > tr > th {
+  background: var(--tbl-head);
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.75rem 0.9rem;
+  border: none;
+  border-bottom: 1px solid var(--tbl-border);
+  white-space: nowrap;
+}
+/* En-tête figé lors du défilement vertical */
+.main-content-wrapper .p-datatable .p-datatable-thead > tr > th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* Colonnes triables */
+.main-content-wrapper .p-datatable .p-sortable-column:hover {
+  background: #eef3fa;
+  color: var(--tbl-ink);
+}
+.main-content-wrapper .p-datatable .p-sortable-column.p-highlight,
+.main-content-wrapper .p-datatable .p-sortable-column.p-highlight:hover {
+  background: #eef3fa;
+  color: var(--tbl-accent);
+}
+.main-content-wrapper .p-datatable .p-sortable-column .p-sortable-column-icon {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  margin-left: 0.35rem;
+}
+.main-content-wrapper
+  .p-datatable
+  .p-sortable-column.p-highlight
+  .p-sortable-column-icon {
+  color: var(--tbl-accent);
+}
+.main-content-wrapper .p-datatable .p-sortable-column:focus,
+.main-content-wrapper .p-datatable .p-sortable-column:focus-visible {
+  box-shadow: inset 0 0 0 2px rgba(245, 124, 0, 0.35);
+  outline: none;
+}
+
+/* ==========================================================================
+   3. Corps du tableau
+   ========================================================================== */
+.main-content-wrapper .p-datatable .p-datatable-tbody > tr {
+  transition: background-color 0.15s ease;
+}
+.main-content-wrapper .p-datatable .p-datatable-tbody > tr > td {
+  padding: 0.7rem 0.9rem;
+  border: none;
+  border-bottom: 1px solid #eff2f7;
+  color: var(--tbl-ink);
+  font-size: 0.875rem;
+  vertical-align: middle;
+}
+.main-content-wrapper .p-datatable .p-datatable-tbody > tr:last-child > td {
+  border-bottom: none;
+}
+/* Lignes alternées très légères */
+.main-content-wrapper
+  .p-datatable.p-datatable-striped
+  .p-datatable-tbody
+  > tr:nth-child(even) {
+  background: #fcfdfe;
+}
+/* Survol : repère visuel net sur toute la ligne */
+.main-content-wrapper .p-datatable .p-datatable-tbody > tr:hover {
+  background: var(--tbl-hover) !important;
+}
+/* Ligne sélectionnée */
+.main-content-wrapper .p-datatable .p-datatable-tbody > tr.p-highlight {
+  background: rgba(245, 124, 0, 0.08) !important;
+  color: var(--tbl-ink);
+  box-shadow: inset 3px 0 0 var(--tbl-accent);
+}
+
+/* Densité compacte (size="small") */
+.main-content-wrapper .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+  padding: 0.5rem 0.75rem;
+}
+.main-content-wrapper .p-datatable.p-datatable-sm .p-datatable-thead > tr > th {
+  padding: 0.6rem 0.75rem;
+}
+
+/* Message « aucun résultat » */
+.main-content-wrapper .p-datatable .p-datatable-emptymessage > td {
+  text-align: center;
+  color: var(--tbl-muted);
+  padding: 2.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   4. Cases à cocher de sélection
+   ========================================================================== */
+.main-content-wrapper .p-datatable .p-checkbox .p-checkbox-box {
+  border-radius: 5px;
+  border-color: #cbd5e1;
+}
+.main-content-wrapper .p-datatable .p-checkbox .p-checkbox-box.p-highlight {
+  background: var(--tbl-accent);
+  border-color: var(--tbl-accent);
+}
+
+/* ==========================================================================
+   5. Pagination
+   ========================================================================== */
+.main-content-wrapper .p-datatable .p-paginator {
+  background: #fff;
+  border: none;
+  border-top: 1px solid var(--tbl-border);
+  padding: 0.65rem 0.9rem;
+  gap: 0.15rem;
+}
+.main-content-wrapper .p-paginator .p-paginator-page,
+.main-content-wrapper .p-paginator .p-paginator-first,
+.main-content-wrapper .p-paginator .p-paginator-prev,
+.main-content-wrapper .p-paginator .p-paginator-next,
+.main-content-wrapper .p-paginator .p-paginator-last {
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  color: #475569;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.main-content-wrapper .p-paginator .p-paginator-page:not(.p-highlight):hover,
+.main-content-wrapper .p-paginator .p-paginator-first:hover,
+.main-content-wrapper .p-paginator .p-paginator-prev:hover,
+.main-content-wrapper .p-paginator .p-paginator-next:hover,
+.main-content-wrapper .p-paginator .p-paginator-last:hover {
+  background: #f1f5f9;
+  color: var(--tbl-ink);
+}
+.main-content-wrapper .p-paginator .p-paginator-page.p-highlight {
+  background: var(--tbl-accent);
+  border-color: var(--tbl-accent);
+  color: #fff;
+  font-weight: 700;
+}
+.main-content-wrapper .p-paginator .p-paginator-current {
+  color: var(--tbl-muted);
+  font-size: 0.82rem;
+}
+.main-content-wrapper .p-paginator .p-dropdown {
+  height: 2rem;
+  border-radius: 8px;
+  border-color: var(--tbl-border);
+}
+
+/* ==========================================================================
+   6. Contenu des cellules
+   ========================================================================== */
+/* Logos d'opérateurs alignés et non déformés */
+.main-content-wrapper .p-datatable td img {
+  object-fit: contain;
+  border-radius: 6px;
+  background: #fff;
+  vertical-align: middle;
+}
+
+/* Boutons d'action : compacts, alignés, sans déformer la ligne */
+.main-content-wrapper .p-datatable td .btn {
+  border-radius: 8px;
+  padding: 0.25rem 0.5rem;
+  line-height: 1.2;
+}
+.main-content-wrapper .p-datatable td .btn-sm {
+  font-size: 0.78rem;
+}
+.main-content-wrapper .p-datatable td .btn-round {
+  border-radius: 8px !important;
+}
+
+/* Badges d'état lisibles (statuts, types) */
+.main-content-wrapper .p-datatable td .badge {
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.72rem;
+  padding: 0.3rem 0.7rem;
+  letter-spacing: 0.01em;
+}
+
+/* Champ de recherche de l'en-tête */
+.main-content-wrapper .p-datatable .p-datatable-header .p-inputtext,
+.main-content-wrapper .p-datatable .p-datatable-header input[type="text"],
+.main-content-wrapper .p-datatable .p-datatable-header input[type="search"] {
+  border-radius: 8px;
+  border: 1px solid var(--tbl-border);
+  padding: 0.4rem 0.9rem ;
+  font-size: 0.86rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.main-content-wrapper .p-datatable .p-datatable-header .p-inputtext:focus,
+.main-content-wrapper .p-datatable .p-datatable-header input:focus {
+  border-color: var(--tbl-accent);
+  box-shadow: 0 0 0 3px rgba(245, 124, 0, 0.15);
+  outline: none;
+}
+
+/* ==========================================================================
+   7. Défilement horizontal maîtrisé
+   Les tableaux larges (minWidth: 50rem) défilent DANS leur conteneur,
+   la page ne défile jamais horizontalement.
+   ========================================================================== */
+.main-content-wrapper .p-datatable .p-datatable-wrapper {
+  overflow-x: auto;
+}
+
+/* ==========================================================================
+   8. Responsive
+   ========================================================================== */
+@media (max-width: 768px) {
+  .main-content-wrapper .p-datatable .p-datatable-header {
+    padding: 0.6rem;
+  }
+  .main-content-wrapper .p-datatable .p-datatable-thead > tr > th,
+  .main-content-wrapper .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  .main-content-wrapper .p-paginator .p-paginator-current {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   9. Impression
+   ========================================================================== */
+@media print {
+  .main-content-wrapper .p-datatable {
+    box-shadow: none;
+    border-color: #ccc;
+  }
+  .main-content-wrapper .p-paginator,
+  .main-content-wrapper .p-datatable .p-datatable-header {
+    display: none !important;
+  }
+}
+
+/* ==========================================================================
+   10. Accessibilité
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .main-content-wrapper .p-datatable .p-datatable-tbody > tr,
+  .main-content-wrapper .p-paginator .p-paginator-page {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,389 @@
+/* ==========================================================================
+   CompareTIC   Espace « Mon profil » (opérateur)
+   --------------------------------------------------------------------------
+   Préfixe `prf-` : aucune collision avec Bootstrap, PrimeReact ou admin.css.
+   Importé après admin.css dans pages/_app.js.
+   ========================================================================== */
+
+.prf-page {
+  --prf-ink: #0f172a;
+  --prf-muted: #64748b;
+  --prf-border: #e6eaf0;
+  --prf-accent: #03832e;
+  max-width: 980px;
+  margin: 0 auto;
+  padding-bottom: 32px;
+}
+
+/* ==========================================================================
+   1. Bandeau d'identité
+   ========================================================================== */
+.prf-hero {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 24px;
+  margin-bottom: 18px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #0f3d2e 0%, #03832e 100%);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(3, 131, 46, 0.18);
+}
+.prf-avatar {
+  flex: 0 0 76px;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.prf-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.prf-avatar-sm {
+  flex-basis: 64px;
+  width: 64px;
+  height: 64px;
+  font-size: 1.25rem;
+  background: #eef3fa;
+  border-color: var(--prf-border);
+  color: var(--prf-accent);
+}
+.prf-name {
+  margin: 0 0 8px 0;
+  font-size: 1.32rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.prf-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}
+.prf-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.22rem 0.7rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* ==========================================================================
+   2. Onglets
+   ========================================================================== */
+.prf-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--prf-border);
+  overflow-x: auto;
+}
+.prf-tab {
+  padding: 0.6rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--prf-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.prf-tab:hover {
+  color: var(--prf-ink);
+}
+.prf-tab.active {
+  color: var(--prf-accent);
+  border-bottom-color: var(--prf-accent);
+}
+
+/* ==========================================================================
+   3. Cartes de formulaire
+   ========================================================================== */
+.prf-card {
+  padding: 22px 24px;
+  background: #fff;
+  border: 1px solid var(--prf-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 18px rgba(15, 23, 42, 0.05);
+}
+.prf-card-head {
+  margin-bottom: 18px;
+}
+.prf-card-head h2 {
+  margin: 0 0 4px 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--prf-ink);
+}
+.prf-card-head p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--prf-muted);
+}
+
+.prf-photo-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px dashed var(--prf-border);
+}
+
+.prf-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 18px;
+}
+.prf-col-2 {
+  grid-column: 1 / -1;
+}
+
+.prf-label {
+  display: block;
+  margin: 0 0 6px 0;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #475569;
+}
+.prf-req {
+  color: #dc2626;
+}
+.prf-input {
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--prf-ink);
+  background: #fff;
+  border: 1px solid #dbe1ea;
+  border-radius: 8px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.prf-input:focus {
+  outline: none;
+  border-color: var(--prf-accent);
+  box-shadow: 0 0 0 3px rgba(3, 131, 46, 0.15);
+}
+.prf-input-error {
+  border-color: #dc2626;
+}
+.prf-hint {
+  margin: -8px 0 14px 0;
+  font-size: 0.76rem;
+  color: var(--prf-muted);
+}
+
+/* ==========================================================================
+   4. Bloc lecture seule
+   ========================================================================== */
+.prf-readonly {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  background: #f7f9fc;
+  border: 1px solid var(--prf-border);
+  border-radius: 8px;
+}
+.prf-ro-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--prf-muted);
+}
+.prf-ro-value {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--prf-ink);
+}
+.prf-ro-note {
+  grid-column: 1 / -1;
+  margin: 4px 0 0 0;
+  font-size: 0.76rem;
+  color: var(--prf-muted);
+}
+
+/* ==========================================================================
+   5. Règles de mot de passe
+   ========================================================================== */
+.prf-show {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 14px 0;
+  font-size: 0.82rem;
+  color: #475569;
+  cursor: pointer;
+  user-select: none;
+}
+.prf-rules {
+  margin: 0 0 16px 0;
+  padding: 12px 14px;
+  list-style: none;
+  background: #f7f9fc;
+  border: 1px solid var(--prf-border);
+  border-radius: 8px;
+}
+.prf-rules li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  line-height: 1.9;
+  color: var(--prf-muted);
+  transition: color 0.15s ease;
+}
+.prf-rules li.ok {
+  color: var(--prf-accent);
+  font-weight: 600;
+}
+.prf-rules li i {
+  width: 1em;
+  text-align: center;
+}
+
+/* ==========================================================================
+   6. Messages et actions
+   ========================================================================== */
+.prf-error {
+  margin-bottom: 14px;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.85rem;
+  color: #991b1b;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+}
+.prf-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+}
+.prf-btn-primary,
+.prf-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.58rem 1.1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+.prf-btn-primary {
+  color: #fff;
+  background: var(--prf-accent);
+}
+.prf-btn-primary:hover:not(:disabled) {
+  background: #026e26;
+}
+.prf-btn-primary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.prf-btn-ghost {
+  color: #475569;
+  background: #fff;
+  border-color: #dbe1ea;
+}
+.prf-btn-ghost:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+.prf-btn-primary:disabled,
+.prf-btn-ghost:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.prf-btn-link {
+  margin-left: 8px;
+  padding: 0;
+  font-size: 0.82rem;
+  color: #dc2626;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.prf-spinner {
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: prf-spin 0.7s linear infinite;
+}
+@keyframes prf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   7. Responsive
+   ========================================================================== */
+@media (max-width: 768px) {
+  .prf-hero {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px 16px;
+  }
+  .prf-meta {
+    justify-content: center;
+  }
+  .prf-grid,
+  .prf-readonly {
+    grid-template-columns: 1fr;
+  }
+  .prf-card {
+    padding: 18px 16px;
+  }
+  .prf-actions {
+    justify-content: stretch;
+  }
+  .prf-actions .prf-btn-primary {
+    width: 100%;
+  }
+}
+
+/* ==========================================================================
+   8. Accessibilité
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .prf-tab,
+  .prf-input,
+  .prf-rules li,
+  .prf-btn-primary,
+  .prf-btn-ghost {
+    transition: none;
+  }
+  .prf-spinner {
+    animation-duration: 2s;
+  }
+}

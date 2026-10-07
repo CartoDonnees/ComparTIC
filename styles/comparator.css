@@ -1,0 +1,1595 @@
+/* ==========================================================================
+   CompareTIC   Comparateur d'offres : design & fluidité
+   --------------------------------------------------------------------------
+   Fichier dédié, importé APRÈS globals.css dans pages/_app.js (il peut donc
+   surcharger l'existant). Tout est scopé sous #comparator pour ne pas affecter
+   le reste de l'application.
+
+   Objectifs :
+   - Palette cohérente et moderne (variables ci-dessous)
+   - Hiérarchie typographique lisible
+   - Barre de tri / filtres soignés (ces classes n'avaient aucun style de base)
+   - Cartes d'offres, badges, boutons polis
+   - Transitions douces + skeleton / état vide
+   - Mobile-first + respect de prefers-reduced-motion
+   ========================================================================== */
+
+#comparator {
+  /* ----- Palette ----- */
+  --cmp-primary: #ff6b1a;        /* Orange marque (CTA principal)            */
+  --cmp-primary-600: #e85d10;    /* Orange foncé (hover/active)              */
+  --cmp-primary-soft: #ccd5cd9c;   /* Orange très clair (fonds, surbrillance)  */
+  --cmp-success: #0e9f46;        /* Vert (validation, zones actives)         */
+  --cmp-success-600: #0b843a;
+  --cmp-accent: #075bf7;         /* Bleu (informations)                      */
+  --cmp-promo: #e11d48;          /* Rouge/rose (promotions, urgences)        */
+
+  --cmp-ink: #1a1d21;            /* Texte principal                          */
+  --cmp-muted: #6b7280;          /* Texte secondaire                         */
+  --cmp-border: #e6e8ec;         /* Bordures discrètes                       */
+  --cmp-surface: #ffffff;        /* Cartes                                   */
+  --cmp-surface-2: #f4f6f8;      /* Fonds doux                               */
+
+  /* ----- Rayons / ombres / focus ----- */
+  --cmp-radius: 8px;
+  --cmp-radius-sm: 8px;
+  --cmp-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.08);
+  --cmp-shadow-md: 0 6px 16px rgba(16, 24, 40, 0.1);
+  --cmp-shadow-lg: 0 14px 32px rgba(16, 24, 40, 0.16);
+  --cmp-ring: 0 0 0 3px rgba(255, 107, 26, 0.28);
+  --cmp-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  color: var(--cmp-ink);
+}
+
+/* Accessibilité : anneau de focus visible et cohérent sur tous les éléments
+   interactifs du comparateur (boutons, chips, inputs, radios…). */
+#comparator :focus-visible {
+  outline: none;
+  box-shadow: var(--cmp-ring);
+  border-radius: var(--cmp-radius-sm);
+}
+
+/* ==========================================================================
+   1. BARRE D'OUTILS DES RÉSULTATS (.products-head)
+   Ces classes (.products-head, .legend, .order, .c-grid, .btn-filter,
+   .is-active) n'avaient AUCUN style de base : la barre s'affichait en liste
+   à puces brute. On lui donne une vraie identité visuelle.
+   ========================================================================== */
+
+#comparator .comparison-products.sch1 .products-head {
+  display: flex;
+  /* Une SEULE ligne : nombre d'offres, « Trier par » + filtres + Exporter,
+     puis la bascule liste/grille. Les filtres défilent horizontalement quand
+     la place manque, plutôt que de passer à la ligne (ce qui faisait grimper
+     la barre sur trois niveaux en mobile). */
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding: 0.45rem 0.7rem;
+  /* Barre dégradée vert -> orange (identité ARTCI) */
+  background: linear-gradient(90deg, #3fa34d 0%, #9abf2e 46%, #f5871f 100%);
+  border: none;
+  border-radius: var(--cmp-radius);
+  box-shadow: var(--cmp-shadow-sm);
+}
+
+#comparator .comparison-products.sch1 .c-grid,
+#comparator .comparison-products.sch1 .c-ful {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex-wrap: nowrap;
+}
+
+/* Nombre d'offres : toujours visible, jamais coupé. */
+#comparator .comparison-products.sch1 .products-head .cmp-count {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* Bascule liste / grille : collée à droite. */
+#comparator .comparison-products.sch1 .products-head .c-grid {
+  flex: 0 0 auto;
+  margin-left: auto;
+  gap: 0.25rem;
+}
+#comparator .comparison-products.sch1 .products-head .c-grid .btn-filter { padding: 0.2rem 0.4rem; }
+#comparator .comparison-products.sch1 .products-head .c-grid .btn-filter i {
+  padding-left: 0 !important;
+  font-size: 16px !important;
+}
+
+/* Écrans intermédiaires : le libellé « Trier par : » cède la place. */
+@media (max-width: 1400px) {
+  #comparator .comparison-products.sch1 .products-head .order .cmp-sort-label { display: none; }
+}
+
+/* Filtres de tri : défilement horizontal discret si la largeur manque. */
+#comparator .comparison-products.sch1 .products-head .order .c-ful {
+  flex-wrap: nowrap !important;
+  /* Le gabarit centre la liste et laisse le débordement visible : les
+     pastilles sortaient de la barre des deux côtés (« Prix » et « Validité »
+     invisibles à gauche). Alignement à gauche + défilement maîtrisé. */
+  justify-content: flex-start !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  overflow-y: hidden;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.55) transparent;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+}
+#comparator .c-ful::-webkit-scrollbar { height: 4px; }
+#comparator .c-ful::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.55); border-radius: 4px; }
+#comparator .c-ful::-webkit-scrollbar-track { background: transparent; }
+#comparator .comparison-products.sch1 .products-head .order .c-ful > li { flex: 0 0 auto; scroll-snap-align: start; }
+
+/* "X Offres" + "Trier par :" en blanc pour ressortir sur la barre colorée */
+#comparator .legend {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+#comparator .legend b {
+  color: #fff;
+  font-weight: 800;
+}
+
+#comparator .comparison-products.sch1 .products-head .order {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: nowrap;
+  /* Prend la place restante et peut rétrécir : c'est ce groupe qui défile. */
+  flex: 1 1 auto;
+  min-width: 0;
+}
+#comparator .comparison-products.sch1 .products-head .order .cmp-sort-label { flex: 0 0 auto; white-space: nowrap; }
+
+/* Chips de tri / bascule d'affichage : pastilles blanches, padding réduit */
+#comparator .btn-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-height: 30px;
+  padding: 0.24rem 0.5rem;
+  font-size: 0.76rem;
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--cmp-ink);
+  background: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s var(--cmp-ease),
+    color 0.2s var(--cmp-ease), border-color 0.2s var(--cmp-ease),
+    transform 0.12s var(--cmp-ease), box-shadow 0.2s var(--cmp-ease);
+}
+#comparator .btn-filter:hover {
+  background: var(--cmp-primary-soft);
+  color: var(--cmp-primary-600);
+}
+#comparator .btn-filter:active {
+  transform: scale(0.96);
+}
+#comparator .btn-filter.is-active {
+  background: linear-gradient(135deg, var(--cmp-primary), var(--cmp-primary-600));
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+}
+#comparator .btn-filter.is-active .c-ic1,
+#comparator .btn-filter.is-active i {
+  color: #fff;
+}
+
+/* Bouton "Exporter" foncé */
+#comparator .btn-filter.btn-f {
+  background: var(--cmp-ink);
+  color: #fff;
+  border-color: var(--cmp-ink);
+}
+#comparator .btn-filter.btn-f:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* Conteneur résultats */
+#comparator .sch1 {
+  padding-top: 0.5rem;
+}
+
+/* Champ de recherche (au-dessus des résultats + dans le sidebar) */
+#comparator .input-group .form-control {
+  border-radius: var(--cmp-radius-sm) 0 0 var(--cmp-radius-sm);
+  border-color: var(--cmp-border);
+  transition: border-color 0.2s var(--cmp-ease), box-shadow 0.2s var(--cmp-ease);
+}
+#comparator .input-group .form-control:focus {
+  border-color: var(--cmp-primary);
+  box-shadow: var(--cmp-ring);
+}
+#comparator .input-group .input-group-text {
+  background: var(--cmp-surface-2);
+  border-color: var(--cmp-border);
+  color: var(--cmp-muted);
+  border-radius: 0 var(--cmp-radius-sm) var(--cmp-radius-sm) 0;
+}
+
+/* ==========================================================================
+   2. CARTES D'OFFRES (.masonry-item)
+   On enrichit le style existant (radius, bordure, hover plus doux).
+   ========================================================================== */
+
+#comparator .masonry-item {
+  border: 1px solid var(--cmp-border);
+  border-radius: var(--cmp-radius);
+  box-shadow: var(--cmp-shadow-sm);
+  overflow: hidden;
+  transition: transform 0.22s var(--cmp-ease), box-shadow 0.22s var(--cmp-ease),
+    border-color 0.22s var(--cmp-ease);
+  /* height: 100%; */
+}
+#comparator .masonry-item:hover {
+  transform: translateY(-4px);
+  /* Ombre plus subtile que l'originale (qui était quasi noire à 0.65) */
+  box-shadow: var(--cmp-shadow-lg);
+  border-color: #d7dae0;
+}
+
+/* --------------------------------------------------------------------------
+   Vue LISTE compacte (.masonry-item.px-5)
+   Réduit fortement la hauteur de chaque ligne pour afficher plusieurs offres
+   simultanément. On surcharge les tailles inline (style={{fontSize:…}}) avec
+   !important (qui l'emporte sur le style inline). Sans casser la mise en page.
+   -------------------------------------------------------------------------- */
+#comparator .masonry-item.px-5 {
+  padding: 0.55rem 1rem !important;
+  margin-bottom: 0.6rem;
+}
+/* Titre de l'offre */
+#comparator .masonry-item.px-5 .c_to1 {
+  font-size: 1.05rem !important;
+}
+/* Quantités de services (Voix / SMS / Internet) */
+#comparator .masonry-item.px-5 table {
+  font-size: 0.95rem !important;
+}
+#comparator .masonry-item.px-5 .c-ts1 {
+  font-size: 0.95rem !important;
+}
+#comparator .masonry-item.px-5 table td span {
+  font-size: 0.85rem !important;
+}
+/* Logo opérateur plus petit */
+#comparator .masonry-item.px-5 .offer-oper-img1 {
+  height: 38px;
+  width: 52px !important;
+}
+/* Pastille promo plus petite */
+#comparator .masonry-item.px-5 img[src*="promo"] {
+  height: 28px !important;
+}
+/* Bloc prix plus discret */
+#comparator .masonry-item.px-5 .bg-light3 {
+  font-size: 1rem !important;
+}
+#comparator .masonry-item.px-5 .bg-light3 span {
+  font-size: 1rem !important;
+}
+/* Resserrer les espacements verticaux */
+#comparator .masonry-item.px-5 hr {
+  margin: 0.35rem 0 !important;
+}
+#comparator .masonry-item.px-5 .pt-4 {
+  padding-top: 0.4rem !important;
+}
+#comparator .masonry-item.px-5 .row.mb-1 {
+  margin-bottom: 0 !important;
+}
+#comparator .masonry-item.px-5 .mb-2 {
+  margin-bottom: 0.25rem !important;
+}
+/* Mode d'accès / avantages : texte plus compact */
+#comparator .masonry-item.px-5 .limite-access {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.55rem;
+}
+#comparator .masonry-item.px-5 ul {
+  margin-bottom: 0 !important;
+}
+
+/* En-tête de carte (titre de la formule) */
+#comparator .offer-header {
+  background: linear-gradient(135deg, #f7f9fb, #eef1f5);
+  color: var(--cmp-ink);
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid var(--cmp-border);
+  border-radius: 0;
+}
+
+/* Badges (prépayé / zone) */
+#comparator .badge-outline {
+  border-radius: 999px;
+  border: 1px solid var(--cmp-border);
+  background: var(--cmp-surface);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  color: var(--cmp-muted);
+}
+
+/* Pastilles "mode d'accès" / dates limites */
+#comparator .limite-access,
+#comparator .limited-date {
+  border: 1px solid var(--cmp-border);
+  border-radius: 8px;
+  background: var(--cmp-surface-2);
+  font-size: 0.8rem;
+  color: var(--cmp-ink);
+}
+
+/* Bloc prix mis en valeur */
+#comparator .bg-light2 {
+  background: var(--cmp-primary-soft) !important;
+  border-radius: var(--cmp-radius-sm);
+}
+
+/* Boutons "Voir plus / Voir moins" */
+#comparator .btn-act-goto,
+#comparator .btn-act-goto1 {
+  border-radius: 8px !important;
+  font-weight: 600;
+  transition: background-color 0.2s var(--cmp-ease), color 0.2s var(--cmp-ease),
+    box-shadow 0.2s var(--cmp-ease), transform 0.12s var(--cmp-ease);
+}
+#comparator .btn-act-goto:active,
+#comparator .btn-act-goto1:active {
+  transform: scale(0.98);
+}
+
+/* Logos opérateurs : objectif "contain" pour éviter la déformation */
+#comparator .offer-oper-img,
+#comparator .offer-oper-img1 {
+  object-fit: contain;
+  background: #fff;
+}
+
+/* ==========================================================================
+   3. PANNEAU DE FILTRES (sidebar)
+   ========================================================================== */
+
+#comparator .filters-title {
+  border: 1px solid var(--cmp-border);
+  border-radius: var(--cmp-radius-sm);
+  background: var(--cmp-surface);
+  font-weight: 700;
+  transition: border-color 0.2s var(--cmp-ease), box-shadow 0.2s var(--cmp-ease);
+}
+#comparator .filters-title:hover {
+  border-color: var(--cmp-primary);
+  box-shadow: var(--cmp-shadow-sm);
+}
+
+/* Accordéons NATIONALE / INTERNATIONALE / ROAMING */
+#comparator .button-87 {
+  border-radius: var(--cmp-radius-sm);
+  letter-spacing: 0.4px;
+}
+
+/* Sous-sections "Mon besoin" / "Mon budget" */
+#comparator .button-6 {
+  border-radius: 0px;
+  transition: all 0.1s var(--cmp-ease);
+}
+#comparator .button-6.bg-success1 {
+  background: linear-gradient(135deg, #181f19, #d65308);
+  color: #fff;
+  border-color: transparent;
+}
+
+/* Bouton "Réinitialiser tous les critères" */
+#comparator .btn-search {
+  border-radius: var(--cmp-radius-sm);
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  transition: filter 0.2s var(--cmp-ease), transform 0.12s var(--cmp-ease);
+}
+#comparator .btn-search:hover {
+  filter: brightness(1.05);
+}
+#comparator .btn-search:active {
+  transform: scale(0.99);
+}
+
+/* ==========================================================================
+   4. ÉTAT VIDE (aucune offre)
+   ========================================================================== */
+
+#comparator .cmp-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 3rem 1.5rem;
+  margin: 1rem;
+  background: var(--cmp-surface);
+  border: 1px dashed var(--cmp-border);
+  border-radius: var(--cmp-radius);
+}
+#comparator .cmp-empty-state__icon {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--cmp-primary-soft);
+  color: var(--cmp-primary);
+  font-size: 28px;
+  margin-bottom: 0.5rem;
+}
+#comparator .cmp-empty-state__title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--cmp-ink);
+  margin: 0;
+}
+#comparator .cmp-empty-state__text {
+  max-width: 420px;
+  color: var(--cmp-muted);
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+/* ==========================================================================
+   5. SKELETON DE CHARGEMENT
+   ========================================================================== */
+
+#comparator .cmp-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+#comparator .cmp-skeleton-card {
+  background: var(--cmp-surface);
+  border: 1px solid var(--cmp-border);
+  border-radius: var(--cmp-radius);
+  box-shadow: var(--cmp-shadow-sm);
+  padding: 1rem;
+}
+#comparator .cmp-skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.75rem 0;
+}
+#comparator .cmp-skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  flex: 0 0 auto;
+}
+#comparator .cmp-skeleton-badges {
+  display: flex;
+  gap: 0.4rem;
+  flex: 1;
+}
+#comparator .cmp-skeleton-pill {
+  height: 18px;
+  width: 64px;
+  border-radius: 999px;
+}
+#comparator .cmp-skeleton-line {
+  height: 14px;
+  border-radius: 6px;
+  margin-bottom: 0.6rem;
+}
+#comparator .cmp-skeleton-line--title {
+  height: 20px;
+  width: 70%;
+}
+#comparator .cmp-skeleton-line--short {
+  width: 45%;
+}
+#comparator .cmp-skeleton-line--btn {
+  height: 36px;
+  border-radius: 999px;
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+/* Effet shimmer commun */
+#comparator .cmp-skeleton-avatar,
+#comparator .cmp-skeleton-pill,
+#comparator .cmp-skeleton-line {
+  background: linear-gradient(90deg, #eef0f3 25%, #e2e5ea 37%, #eef0f3 63%);
+  background-size: 400% 100%;
+  animation: cmp-shimmer 1.4s ease infinite;
+}
+@keyframes cmp-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+/* ==========================================================================
+   6. RESPONSIVE (mobile-first)
+   On garantit que les données restent lisibles et bien disposées sur mobile.
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  #comparator .comparison-products.sch1 .products-head {
+    padding: 0.45rem 0.5rem;
+    gap: 0.4rem;
+  }
+  /* Le compteur passe en version courte (« 53 » + pictogramme) pour laisser
+     la place aux filtres sans casser la ligne. */
+  #comparator .comparison-products.sch1 .products-head .cmp-count { font-size: 0.8rem; }
+  /* Le gabarit d'origine impose `display: block !important` sur `.order`,
+     `.c-lg1` et une taille fixe aux pastilles en dessous de 768 px : la barre
+     se dépliait alors sur plusieurs niveaux. On rétablit la ligne unique. */
+  #comparator .comparison-products.sch1 .products-head .order { display: flex !important; }
+  #comparator .comparison-products.sch1 .products-head .order .cmp-sort-label { display: none !important; }
+  #comparator .comparison-products.sch1 .products-head .order .c-ful {
+    display: flex !important;
+    /* Le gabarit remet `flex-wrap: wrap` : les six pastilles se dépliaient
+       alors sur six lignes. Elles défilent horizontalement à la place. */
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+    width: auto;
+    margin: 0 !important;
+  }
+  #comparator .comparison-products.sch1 .products-head .c-grid { display: flex !important; }
+  #comparator .comparison-products.sch1 .products-head .btn-filter {
+    width: auto !important;
+    height: auto !important;
+    font-size: 0.72rem !important;
+  }
+  #comparator .comparison-products.sch1 .products-head .c-ic1 { font-size: 9px !important; }
+  /* Les chips de tri restent tactiles et alignés */
+  #comparator .btn-filter {
+    min-height: 28px;
+    padding: 0.2rem 0.5rem !important;
+    font-size: 0.74rem;
+  }
+  /* Grille d'offres : une seule colonne, pleine largeur.
+     (La largeur est désormais pilotée par la grille CSS, voir plus bas.) */
+  #comparator .masonry-container {
+    grid-template-columns: 1fr;
+  }
+  /* Vue liste : on réduit le padding latéral excessif (px-5) */
+  #comparator .masonry-item.px-5 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  #comparator .cmp-skeleton-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   7. ACCESSIBILITÉ   réduction des animations
+   Désactive les animations d'entrée et le shimmer pour les utilisateurs qui
+   ont activé "réduire les animations" dans leur OS.
+   ========================================================================== */
+
+/* ==========================================================================
+   8. MODAL DE DÉTAIL (.cmp-detail)
+   Le Dialog PrimeReact est rendu dans un portail hors de #comparator :
+   ces classes sont donc globales mais toutes préfixées « cmp-detail ».
+   On y redéclare les tokens utiles.
+   ========================================================================== */
+
+.cmp-detail {
+  --cmp-primary: #ff6b1a;
+  --cmp-primary-soft: #fff1e8;
+  --cmp-success: #0e9f46;
+  --cmp-accent: #075bf7;
+  --cmp-promo: #e11d48;
+  --cmp-ink: #1a1d21;
+  --cmp-muted: #6b7280;
+  --cmp-border: #e6e8ec;
+  --cmp-surface-2: #f4f6f8;
+  /* border-radius: 18px; */
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(16, 24, 40, 0.28);
+}
+.cmp-detail .p-dialog-header {
+  background: linear-gradient(135deg, #1a1d21, #2b2f36);
+  color: #fff;
+  padding: 1rem 1.25rem;
+}
+.cmp-detail .p-dialog-header .p-dialog-header-icon {
+  color: #fff;
+}
+.cmp-detail .p-dialog-header .p-dialog-header-icon:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+.cmp-detail__content.p-dialog-content {
+  padding: 1.4rem 1.6rem 1.8rem;
+  /* La modale peut être longue (services, avantages, pays) : on lui laisse
+     l essentiel de la hauteur d écran et on fait défiler le contenu plutôt
+     que la page. */
+  max-height: calc(90vh - var(--adh-h, 62px));
+  overflow-y: auto;
+}
+
+/* Sur grand écran, les deux sections « Organisations » et « Pays » tiennent
+   côte à côte : la modale élargie est ainsi réellement exploitée. */
+@media (min-width: 992px) {
+  .cmp-cov--full {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) 2fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .cmp-cov__section + .cmp-cov__section {
+    margin-top: 0;
+  }
+}
+
+.cmp-detail__header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.cmp-detail__logo {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 8px;
+  padding: 4px;
+}
+.cmp-detail__title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.cmp-detail__operator {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.cmp-detail__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+.cmp-detail__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border-radius: 5px;
+  border: 1px solid var(--cmp-border);
+  background: var(--cmp-surface-2);
+  color: var(--cmp-ink);
+}
+.cmp-detail__badge--info {
+  color: var(--cmp-accent);
+  border-color: rgba(7, 91, 247, 0.25);
+  background: rgba(7, 91, 247, 0.08);
+}
+.cmp-detail__badge--zone {
+  color: var(--cmp-success);
+  border-color: rgba(14, 159, 70, 0.25);
+  background: rgba(14, 159, 70, 0.08);
+}
+.cmp-detail__badge--promo {
+  color: var(--cmp-promo);
+  border-color: rgba(225, 29, 72, 0.25);
+  background: rgba(225, 29, 72, 0.08);
+}
+.cmp-detail__badge--dark {
+  color: var(--cmp-dark);
+  border-color: rgba(25, 24, 24, 0.25);
+  background: rgba(8, 8, 8, 0.08);
+}
+
+.cmp-detail__price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  background: rgb(213, 215, 213);
+  margin-bottom: 1.1rem;
+}
+.cmp-detail__price-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--cmp-ink);
+}
+.cmp-detail__price-currency {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--cmp-muted);
+  margin-left: 0.35rem;
+}
+.cmp-detail__validity {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  color: var(--cmp-ink);
+  background: #fff;
+  border: 1px solid var(--cmp-border);
+  border-radius: 8px;
+  padding: 0.35rem 0.8rem;
+  white-space: nowrap;
+}
+
+.cmp-detail__services {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 1.1rem;
+}
+.cmp-detail__service {
+  text-align: center;
+  padding: 0.9rem 0.5rem;
+  border: 1px solid var(--cmp-border);
+  border-radius: 8px;
+  background: #fff;
+}
+.cmp-detail__service > i {
+  font-size: 1.3rem;
+  color: var(--cmp-dark);
+}
+.cmp-detail__service-qty {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--cmp-ink);
+  margin-top: 0.25rem;
+}
+.cmp-detail__service-label {
+  font-size: 0.78rem;
+  color: var(--cmp-muted);
+}
+
+.cmp-detail__promo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: var(--cmp-promo);
+  background: rgba(225, 29, 72, 0.07);
+  border: 1px solid rgba(225, 29, 72, 0.2);
+  /* border-radius: 8px; */
+  padding: 0.5rem 0.5rem;
+  margin-bottom: 1.1rem;
+}
+
+.cmp-detail__section {
+  margin-bottom: 1rem;
+}
+.cmp-detail__section-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--cmp-ink);
+  margin: 0 0 0.5rem;
+}
+.cmp-detail__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.cmp-detail__chip {
+  font-size: 0.82rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 8px;
+  background: var(--cmp-surface-2);
+  border: 1px solid var(--cmp-border);
+  color: var(--cmp-ink);
+}
+.cmp-detail__advantages {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+.cmp-detail__advantages li {
+  font-size: 0.88rem;
+  color: var(--cmp-ink);
+  margin-bottom: 0.3rem;
+}
+.cmp-detail__empty {
+  text-align: center;
+  color: var(--cmp-muted);
+  padding: 2rem 0;
+}
+
+@media (max-width: 768px) {
+  .cmp-detail__price-value {
+    font-size: 1.6rem;
+  }
+  .cmp-detail__price-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #comparator .trans-fr,
+  #comparator .trans-fl,
+  #comparator .trans-fl-l5,
+  #comparator .trans-fl-l8,
+  #comparator .trans-fr-r5,
+  #comparator .trans-fb,
+  #comparator .comparison-filters,
+  #comparator .cmp-skeleton-avatar,
+  #comparator .cmp-skeleton-pill,
+  #comparator .cmp-skeleton-line {
+    animation: none !important;
+  }
+  #comparator * {
+    transition-duration: 0.01ms !important;
+  }
+  #comparator .masonry-item:hover {
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   10. COMPARAISON MULTI-OFFRES (retour présentation ARTCI)
+   Bandeau flottant + modale de comparaison côte à côte.
+   Classes préfixées `cmp-cmp-` ; certaines sont hors #comparator (portail /
+   position fixed) donc non scopées.
+   ========================================================================== */
+
+/* Barre flottante */
+.cmp-cmp-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  max-width: min(920px, 94vw);
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1a1d21, #2b2f36);
+  color: #fff;
+  box-shadow: 0 16px 40px rgba(16, 24, 40, 0.35);
+  animation: cmp-cmp-up 0.28s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes cmp-cmp-up {
+  from { opacity: 0; transform: translate(-50%, 16px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+.cmp-cmp-bar__thumbs {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.cmp-cmp-thumb {
+  position: relative;
+  display: inline-flex;
+}
+.cmp-cmp-thumb img {
+  width: 40px;
+  height: 34px;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 8px;
+  padding: 3px;
+}
+.cmp-cmp-thumb button {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: none;
+  background: #e11d48;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.cmp-cmp-bar__count {
+  font-size: 0.82rem;
+  opacity: 0.85;
+  white-space: nowrap;
+  margin-left: 0.25rem;
+}
+.cmp-cmp-bar__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+.cmp-cmp-bar__actions .btn-light {
+  color: #1a1d21;
+}
+.cmp-cmp-bar__actions .btn:disabled {
+  opacity: 0.5;
+}
+
+/* ----- Modale de comparaison ----- */
+.cmp-compare.p-dialog {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.32);
+}
+.cmp-compare .p-dialog-header {
+  background: linear-gradient(110deg, #3fa34d 0%, #9abf2e 46%, #f5871f 100%) !important;
+  color: #fff !important;
+  padding: 14px 20px !important;
+}
+.cmp-compare .p-dialog-header .p-dialog-title,
+.cmp-compare .p-dialog-header h5,
+.cmp-compare .p-dialog-header .p-dialog-header-icon {
+  color: #fff !important;
+}
+.cmp-compare .p-dialog-content {
+  padding: 0 !important;
+  background: #fff;
+}
+.cmp-cmp-empty {
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: #6b7280;
+}
+.cmp-cmp-scroll {
+  overflow-x: auto;
+  padding: 4px;
+}
+.cmp-cmp-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  min-width: 520px;
+}
+.cmp-cmp-table th,
+.cmp-cmp-table td {
+  border-bottom: 1px solid #505050;
+  padding: 0.7rem 0.85rem;
+  text-align: center;
+  vertical-align: middle;
+}
+/* Colonne des critères (figée à gauche) */
+.cmp-cmp-label,
+.cmp-cmp-corner {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: #747576;
+  text-align: left !important;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+}
+.cmp-cmp-corner {
+  z-index: 3;
+}
+.cmp-cmp-offerhead {
+  position: relative;
+  background: #fff;
+  min-width: 150px;
+}
+.cmp-cmp-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: pointer;
+  line-height: 1;
+}
+.cmp-cmp-remove:hover {
+  background: #e11d48;
+  color: #fff;
+}
+.cmp-cmp-logo {
+  width: 56px;
+  height: 42px;
+  object-fit: contain;
+}
+.cmp-cmp-title {
+  font-weight: 800;
+  color: #1a1d21;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+.cmp-cmp-oper {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+.cmp-cmp-cell {
+  color: #1a1d21;
+  font-size: 0.9rem;
+}
+.cmp-cmp-cell--best {
+  background: rgba(14, 159, 70, 0.09);
+}
+.cmp-cmp-badge {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: #0e9f46;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.cmp-cmp-promo {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(225, 29, 72, 0.1);
+  color: #e11d48;
+  font-weight: 700;
+  font-size: 0.78rem;
+}
+.cmp-cmp-cell--adv {
+  text-align: left;
+}
+.cmp-cmp-advlist {
+  margin: 0;
+  padding-left: 1rem;
+  text-align: left;
+}
+.cmp-cmp-advlist li {
+  font-size: 0.8rem;
+  color: #334155;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cmp-cmp-bar { animation: none; }
+}
+
+/* ==========================================================================
+   11. AIDE CONTEXTUELLE ZONES (National / International / Roaming)
+   Retour présentation ARTCI : « ajouter une note d'information expliquant les
+   critères International et Roaming ».
+   ========================================================================== */
+#comparator .cmp-help-note {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin: 0 0 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--cmp-radius-sm);
+  background: #eef6ff;
+  border: 1px solid #d7e9ff;
+  color: #1e3a5f;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+#comparator .cmp-help-note > i {
+  color: var(--cmp-accent);
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+#comparator .cmp-help-note b {
+  font-weight: 800;
+}
+
+/* Le FilterModal (mobile) est rendu dans un portail, hors #comparator :
+   on redéclare la note d'aide sans scope pour qu'elle s'y affiche aussi. */
+.cmp-help-note {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin: 0 0 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  background: #eef6ff;
+  border: 1px solid #d7e9ff;
+  color: #1e3a5f;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+.cmp-help-note > i {
+  color: #075bf7;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.cmp-help-note b { font-weight: 800; }
+
+
+
+/* --------------------------------------------------------------------------
+   Carte SÉLECTIONNÉE pour la comparaison : bordure + ombre marquées
+   -------------------------------------------------------------------------- */
+#comparator .masonry-item.is-compared {
+  border: 2px solid var(--cmp-success);
+  box-shadow: 0 0 0 4px rgba(255, 107, 26, 0.14),
+    0 10px 24px rgba(255, 107, 26, 0.18);
+  position: relative;
+}
+#comparator .masonry-item.is-compared:hover {
+  border-color: var(--cmp-success-600);
+  box-shadow: 0 0 0 4px rgba(255, 107, 26, 0.18),
+    0 16px 32px rgba(255, 107, 26, 0.24);
+}
+/* Pastille "sélectionnée" en coin de carte */
+#comparator .masonry-item.is-compared::after {
+  content: "\f633"; /* bi-check-lg */
+  font-family: "bootstrap-icons";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--cmp-primary);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(255, 107, 26, 0.4);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* --------------------------------------------------------------------------
+   Bascule "comparer"   petit bouton icône autonome
+   N'utilise plus les classes Bootstrap (.btn/.btn-sm) : taille entièrement
+   maîtrisée et identique en vue grille et en vue liste, quel que soit l'état.
+   -------------------------------------------------------------------------- */
+#comparator .cmp-cmp-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 24px;
+  padding: 10px !important;
+  margin: 0;
+  flex: 0 0 auto;
+  border: 1px solid var(--cmp-border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--cmp-muted);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s var(--cmp-ease),
+    color 0.15s var(--cmp-ease), border-color 0.15s var(--cmp-ease);
+}
+#comparator .cmp-cmp-toggle:hover {
+  border-color: var(--cmp-primary);
+  color: var(--cmp-primary);
+}
+#comparator .cmp-cmp-toggle.is-on {
+  background: var(--cmp-primary);
+  border-color: var(--cmp-primary);
+  color: #fff;
+}
+#comparator .cmp-cmp-toggle.is-on:hover {
+  background: var(--cmp-primary-600);
+  border-color: var(--cmp-primary-600);
+}
+
+/* ==========================================================================
+   Panneaux de zone du comparateur   INTERNATIONALE / ROAMING
+   --------------------------------------------------------------------------
+   Remplacent le gabarit `button-87` + `.wrapper` hérité : en-tête lisible,
+   pastille du nombre de critères actifs, remise à zéro par panneau.
+   ========================================================================== */
+.cmp-zone {
+  margin-top: 8px;
+}
+
+.cmp-zone__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0.62rem 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #0f172a;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.cmp-zone__head:hover {
+  background: #e8eef6;
+}
+.cmp-zone__head.is-open {
+  background: #0f3d2e;
+  border-color: #0f3d2e;
+  color: #fff;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.cmp-zone__ico {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+.cmp-zone__title {
+  flex: 1 1 auto;
+  text-align: left;
+}
+/* Pastille : indique qu un panneau replié porte encore des critères actifs. */
+.cmp-zone__count {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #fff;
+  background: #f57c00;
+  border-radius: 999px;
+}
+.cmp-zone__caret {
+  font-size: 0.72rem;
+  transition: transform 0.18s ease;
+}
+.cmp-zone__caret.up {
+  transform: rotate(180deg);
+}
+
+.cmp-zone__body {
+  padding: 12px 12px 14px 12px;
+  background: #fff;
+  border: 1px solid #0f3d2e;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+}
+
+.cmp-zone__label {
+  display: block;
+  margin: 10px 0 5px 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+.cmp-zone__body .cmp-help-note + .cmp-zone__label {
+  margin-top: 4px;
+}
+
+.cmp-zone__field.p-dropdown {
+  border-radius: 8px;
+  border-color: #dbe1ea;
+  font-size: 0.85rem;
+}
+.cmp-zone__field.p-dropdown:not(.p-disabled).p-focus {
+  border-color: #03832e;
+  box-shadow: 0 0 0 3px rgba(3, 131, 46, 0.15);
+}
+.cmp-zone__field .p-dropdown-label {
+  padding: 0.45rem 0.7rem;
+}
+
+.cmp-zone__reset {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 12px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #b45309;
+  background: #fdf3e3;
+  border: 1px solid #fadfb0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.cmp-zone__reset:hover {
+  background: #fbe9cd;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cmp-zone__head,
+  .cmp-zone__caret,
+  .cmp-zone__reset,
+  .cmp-zone__field.p-dropdown {
+    transition: none;
+  }
+}
+
+/* État vide d'un panneau de zone : explique pourquoi les listes sont vides. */
+.cmp-zone__empty {
+  margin: 6px 0 2px 0;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: #7c5a10;
+  background: #fdf7e7;
+  border: 1px solid #f3e2b8;
+  border-radius: 8px;
+}
+
+/* ==========================================================================
+   Organisations et pays concernés par une offre (internationale / roaming)
+   --------------------------------------------------------------------------
+   Deux sections distinctes : les organisations, puis les pays.
+   `compact` : sur la carte de résultat.  `full` : dans la modale de détail.
+   ========================================================================== */
+
+/* ---------- Carte de résultat ---------- */
+.cmp-cov--compact {
+  margin: 4px 2px 0 2px;
+  padding: 6px 8px;
+  background: #f4f8fb;
+  border: 1px solid #e2ecf3;
+  border-radius: 8px;
+}
+.cmp-cov__block + .cmp-cov__block {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px dashed #dbe7ef;
+}
+.cmp-cov__label {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #7c93a4;
+}
+.cmp-cov__values {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: #334155;
+}
+.cmp-cov__values--orgs {
+  font-weight: 700;
+  color: #0b7285;
+}
+
+/* ---------- Modale de détail ---------- */
+.cmp-cov--full {
+  margin-top: 14px;
+}
+.cmp-cov__section + .cmp-cov__section {
+  margin-top: 14px;
+}
+.cmp-cov__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.cmp-cov__chip {
+  padding: 0.16rem 0.55rem;
+  font-size: 0.74rem;
+  color: #0f172a;
+  background: #eef4f8;
+  border: 1px solid #dbe7ef;
+  border-radius: 999px;
+}
+
+/* ==========================================================================
+   Badges d'offre   type de paiement et zone
+   --------------------------------------------------------------------------
+   Les deux badges s'appuyaient sur `fs-sm shadow-info` / `shadow-danger`,
+   trois classes qui n'existent dans AUCUNE feuille du projet : seul
+   `.badge-outline` habillait réellement l'élément, sans distinction entre
+   les deux natures d'information. On les différencie ici, avec un rendu
+   identique en vue liste et en vue grille.
+   ========================================================================== */
+#comparator .cmp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.16rem 0.6rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.5;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+#comparator .cmp-badge + .cmp-badge {
+  margin-left: 6px;
+}
+#comparator .cmp-badge--billing {
+  color: #1d4ed8;
+  background: #e8effd;
+  border-color: #d3e0fb;
+}
+#comparator .cmp-badge--zone {
+  color: #0b7285;
+  background: #e6f4f7;
+  border-color: #cfe7ec;
+}
+#comparator .cmp-badge i {
+  font-size: 0.78rem;
+  opacity: 0.9;
+}
+
+/* Ligne de badges de la vue liste : même respiration que la vue grille. */
+#comparator .cmp-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 4px;
+}
+
+/* ==========================================================================
+   Vue GRILLE   disposition sans trous
+   --------------------------------------------------------------------------
+   La grille reposait sur `row` + `col-md-4` de Bootstrap : chaque ligne prenait
+   la hauteur de sa carte la plus haute, laissant un vide sous les plus courtes.
+   L'écart est marqué depuis que les offres internationales affichent leurs
+   organisations et pays, absents des offres nationales.
+
+   On passe en grille CSS avec des cartes étirées à hauteur égale : plus de
+   trous, et l'ordre de tri est préservé (contrairement à une maçonnerie en
+   colonnes, qui lit de haut en bas colonne par colonne).
+   ========================================================================== */
+#comparator .masonry-container {
+  display: grid;
+  /* Colonnes fluides : plus de points de rupture à maintenir. */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+  /* Neutralise les marges négatives de `.row`. */
+  margin: 0;
+}
+
+/* Les colonnes Bootstrap ne pilotent plus la largeur : la grille s'en charge. */
+#comparator .masonry-container > [class*="col-"] {
+  width: auto;
+  max-width: none;
+  flex: none;
+  padding: 0;
+  display: flex;
+}
+
+/* Carte étirée sur toute la hauteur de sa cellule. */
+#comparator .masonry-container .masonry-item {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+/* Le corps occupe la place restante... */
+#comparator .masonry-container .masonry-item > .px-3 {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+/* ...et la barre d'actions est plaquée en bas, pour que les cartes d'une même
+   ligne s'alignent au lieu de flotter. */
+#comparator .masonry-container .masonry-item > .px-3 > :last-child {
+  margin-top: auto;
+}
+
+@media (max-width: 575.98px) {
+  #comparator .masonry-container {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+/* ==========================================================================
+   Pagination des offres du comparateur
+   componnents/screens/client/comparator/ResultComponent.jsx
+   Affichée seulement au-delà d'une page. Aplats doux, sélection en teinte
+   légère, aucune animation de rebond.
+   ========================================================================== */
+.cmp-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 18px;
+  margin-top: 16px;
+  padding: 10px 14px;
+  border: 1px solid #edf1f6;
+  border-radius: 8px;
+  background: #fbfcfd;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+.cmp-pager__count { margin: 0; }
+.cmp-pager__count b { color: #0f172a; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.cmp-pager__pages {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #edf1f6;
+}
+.cmp-pager__btn,
+.cmp-pager__num {
+  display: grid;
+  place-items: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+.cmp-pager__btn:hover:not(:disabled),
+.cmp-pager__num:hover:not(.is-current) { background: #f2f6f4; color: #0f172a; }
+.cmp-pager__btn:disabled { color: #cbd5e1; cursor: not-allowed; }
+
+/* Page courante : teinte légère, pas d'aplat saturé. */
+.cmp-pager__num.is-current {
+  background: #eaf5ee;
+  color: #03832e;
+  font-weight: 600;
+}
+.cmp-pager__gap { padding: 0 4px; color: #cbd5e1; }
+
+.cmp-pager__size { display: inline-flex; align-items: center; gap: 8px; margin: 0; white-space: nowrap; }
+.cmp-pager__size select {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #edf1f6;
+  border-radius: 9px;
+  background: #fff;
+  color: #0f172a;
+  font-size: 0.85rem;
+}
+.cmp-pager__size select:hover { border-color: #dbe3ec; }
+.cmp-pager__size select:focus { outline: none; border-color: #9fd4b3; box-shadow: 0 0 0 3px rgba(3, 131, 46, 0.1); }
+
+.cmp-pager__btn:focus-visible,
+.cmp-pager__num:focus-visible { outline: 2px solid #9fd4b3; outline-offset: 1px; }
+
+@media (max-width: 767.98px) {
+  .cmp-pager { justify-content: center; text-align: center; gap: 10px; }
+  .cmp-pager__size { width: 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cmp-pager__btn, .cmp-pager__num { transition: none; }
+}
+
+/* Très petits écrans : la barre reste sur une ligne, les filtres défilent. */
+@media (max-width: 480px) {
+  #comparator .comparison-products.sch1 .products-head { gap: 0.35rem; }
+  #comparator .comparison-products.sch1 .products-head .cmp-count { font-size: 0.75rem; }
+  #comparator .btn-filter { font-size: 0.72rem; padding: 0.2rem 0.45rem !important; }
+  #comparator .c-grid .btn-filter i { font-size: 16px !important; padding-left: 3px !important; }
+}

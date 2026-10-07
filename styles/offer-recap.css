@@ -1,0 +1,373 @@
+/* ==========================================================================
+   CompareTIC   Vue « RÉSUMÉ DE L'OFFRE » (étape 5)
+   --------------------------------------------------------------------------
+   Modernise la dernière étape des parcours de création, de modification et de
+   monitoring (admin + opérateur). Tout est scopé par `.offer-recap`, posée sur
+   la racine de l'étape, pour n'affecter aucun autre écran.
+
+   L'ancienne présentation empilait des alertes Bootstrap pleines (bleu, jaune,
+   vert) aux angles droits : très chargée et peu lisible. On la remplace par
+   des sections claires, hiérarchisées, avec des accents de couleur discrets.
+   ========================================================================== */
+
+.offer-recap {
+  --rc-ink: #0f172a;
+  --rc-muted: #64748b;
+  --rc-border: #e5e9f0;
+  --rc-surface: #ffffff;
+  --rc-soft: #f7f9fc;
+  --rc-green: #0e9f46;
+  --rc-orange: #f57c00;
+  --rc-accent: #2563eb;
+  --rc-promo: #e11d48;
+  --rc-radius: 8px;
+  --rc-radius-sm: 8px;
+  --rc-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 6px 18px rgba(15, 23, 42, 0.06);
+
+  color: var(--rc-ink);
+}
+
+/* ---------- Carte principale ---------- */
+.offer-recap .card {
+  border: 1px solid var(--rc-border) !important;
+  border-radius: var(--rc-radius) !important;
+  box-shadow: var(--rc-shadow);
+  overflow: hidden;
+}
+.offer-recap .card-header,
+.offer-recap .card-header.bg-light4 {
+  background: linear-gradient(110deg, #1f2937, #0f172a) !important;
+  color: #fff !important;
+  border: none;
+  padding: 0.85rem 1.1rem;
+}
+.offer-recap .card-header b {
+  letter-spacing: 0.06em;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+.offer-recap .card-body,
+.offer-recap .card-body.bg-primary1 {
+  background: var(--rc-soft) !important;
+  padding: 1rem;
+}
+
+/* Bouton Imprimer */
+.offer-recap .btn-warning {
+  /* border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 0.3rem 0.9rem;
+  background: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: var(--rc-ink);
+  transition: transform 0.12s ease, background-color 0.2s ease; */
+}
+.offer-recap .card-header .btn-warning:hover {
+  background: #fff5e8;
+  transform: translateY(-1px);
+}
+
+/* ---------- Bandeau type d'offre / offre parente ---------- */
+.offer-recap .card-body > .d-flex:first-child {
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+  flex-wrap: wrap;
+}
+.offer-recap .card-body > .d-flex:first-child > div {
+  font-size: 0.95rem !important;
+}
+/* Pastille "Offre promotionnelle" / "Offre de base" */
+.offer-recap .card-body > .d-flex:first-child > .d-flex {
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(225, 29, 72, 0.08);
+  color: var(--rc-promo);
+  border: 1px solid rgba(225, 29, 72, 0.2);
+  border-radius: 999px;
+  padding: 0.25rem 0.85rem;
+  font-size: 0.9rem !important;
+  font-weight: 700;
+}
+.offer-recap .card-body > .d-flex:first-child img[src*="promo"] {
+  height: 22px !important;
+}
+
+/* ---------- Conteneur "feuille" ---------- */
+.offer-recap .bg-shadow {
+  background: var(--rc-surface);
+  border: 1px solid var(--rc-border);
+  border-radius: var(--rc-radius);
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+/* ---------- En-tête : titre + code ---------- */
+.offer-recap .alert-info {
+  background: linear-gradient(110deg, #eef4ff, #f6f9ff) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--rc-border) !important;
+  color: var(--rc-ink) !important;
+  border-radius: 0 !important;
+  padding: 1rem 1.15rem !important;
+}
+.offer-recap .alert-info h2 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.offer-recap .alert-info h4 {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--rc-muted);
+}
+.offer-recap .alert-info h4 b {
+  display: inline-block;
+  background: var(--rc-surface);
+  border: 1px solid var(--rc-border);
+  border-radius: 999px;
+  padding: 0.2rem 0.75rem;
+  color: var(--rc-ink);
+  letter-spacing: 0.03em;
+}
+
+/* ---------- Blocs d'information ---------- */
+.offer-recap .alert-warning,
+.offer-recap .alert-success,
+.offer-recap .alert-primary {
+  background: var(--rc-surface) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid var(--rc-border) !important;
+  color: var(--rc-ink) !important;
+  padding: 0.9rem 1.15rem !important;
+  margin: 0 !important;
+}
+/* Accent latéral discret par type de section */
+.offer-recap .alert-warning {
+  box-shadow: inset 3px 0 0 var(--rc-orange);
+}
+.offer-recap .alert-success {
+  box-shadow: inset 3px 0 0 var(--rc-green);
+}
+.offer-recap .alert-primary {
+  box-shadow: inset 3px 0 0 var(--rc-accent);
+}
+.offer-recap .alert-warning *,
+.offer-recap .alert-success *,
+.offer-recap .alert-primary * {
+  color: inherit !important;
+}
+/* Les dates et libellés secondaires en gris, les valeurs en gras foncé */
+.offer-recap .alert-warning .row > div > div > div {
+  font-size: 0.88rem;
+  color: var(--rc-muted);
+  margin-bottom: 0.15rem;
+}
+.offer-recap .alert-warning b {
+  color: var(--rc-ink) !important;
+  margin-left: 0.25rem;
+}
+/* On conserve la mise en garde sur la date de lancement */
+.offer-recap .text-danger,
+.offer-recap .text-danger b {
+  color: var(--rc-promo) !important;
+}
+.offer-recap .text-info,
+.offer-recap .text-info b {
+  color: var(--rc-accent) !important;
+}
+
+/* ---------- Tableaux (formules, services, avantages) ---------- */
+.offer-recap .table {
+  margin-bottom: 0;
+  font-size: 0.88rem;
+}
+.offer-recap .table > :not(caption) > * > * {
+  padding: 0.5rem 0.65rem;
+  vertical-align: middle;
+}
+.offer-recap .table-bordered,
+.offer-recap .table-bordered th,
+.offer-recap .table-bordered td {
+  border-color: var(--rc-border) !important;
+}
+.offer-recap .table thead th {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+/* En-têtes de tableaux sombres -> slate cohérent */
+.offer-recap .table .bg-secondary,
+.offer-recap .table .bg-dark,
+.offer-recap .bg-secondary {
+  background: #334155 !important;
+  color: #fff !important;
+}
+.offer-recap .table-striped > tbody > tr:nth-of-type(odd) > * {
+  background: #fbfcfe;
+}
+.offer-recap .table tbody tr:hover > * {
+  background: #f3f7fd;
+}
+
+/* ---------- Angles droits hérités ---------- */
+.offer-recap .rounded-0 {
+  border-radius: 0 !important;
+}
+.offer-recap .bg-shadow > *:last-child {
+  border-bottom: none !important;
+}
+
+/* ---------- Badges / pastilles ---------- */
+.offer-recap .badge {
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- Boutons de l'étape ---------- */
+.offer-recap .btn {
+  border-radius: var(--rc-radius-sm);
+  font-weight: 600;
+  transition: transform 0.12s ease, box-shadow 0.2s ease;
+}
+.offer-recap .btn:active {
+  transform: scale(0.99);
+}
+.offer-recap .btn-success {
+  background: linear-gradient(135deg, #149a51, #0b7a35);
+  border-color: transparent;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .offer-recap .alert-info {
+    text-align: left;
+  }
+  .offer-recap .alert-info .d-flex {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .offer-recap .alert-info h2 {
+    font-size: 1.15rem;
+  }
+  .offer-recap .table {
+    font-size: 0.8rem;
+  }
+}
+
+/* ---------- Impression ---------- */
+/* ---------- En-tête réservé au document imprimé ----------
+   Masqué à l'écran : le titre « RESUME DE L'OFFRE » y est déjà porté par
+   l'en-tête de la carte, lequel n'est pas imprimé. */
+.recap-print-head {
+  display: none;
+}
+
+/* ==========================================================================
+   IMPRESSION
+   --------------------------------------------------------------------------
+   react-to-print clone UNIQUEMENT le nœud référencé, sans ses ancêtres : une
+   règle écrite « .offer-recap .x » ne trouvait donc plus son ancêtre dans
+   l'iframe d'impression et ne s'appliquait pas. La classe .offer-recap est
+   désormais portée par le nœud imprimé lui-même, et les règles ci-dessous
+   sont doublées sur .recap-print pour être sûres de porter.
+   ========================================================================== */
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+
+  .recap-print-head {
+    display: block;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0f172a;
+  }
+  .recap-print-title {
+    font-size: 15pt;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #0f172a;
+  }
+  .recap-print-meta {
+    font-size: 8pt;
+    color: #475569;
+  }
+
+  /* Les boutons d'action n'ont pas leur place sur le document. */
+  .offer-recap .btn,
+  .recap-print .btn,
+  .recap-print button {
+    display: none !important;
+  }
+
+  .offer-recap .card,
+  .offer-recap .bg-shadow,
+  .recap-print,
+  .recap-print .card,
+  .recap-print .bg-shadow {
+    box-shadow: none !important;
+    border-color: #ccc !important;
+  }
+  .offer-recap .card-header,
+  .recap-print .card-header {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+  }
+
+  /* Fonds et couleurs : sans cela, en-têtes de tableaux et badges sortent
+     blancs, et les libellés écrits en blanc deviennent illisibles. */
+  .recap-print,
+  .recap-print * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Aucun contenu ne doit être rogné par un débordement masqué ou une
+     hauteur contrainte (zones de formules, listes de pays...). */
+  .recap-print,
+  .recap-print * {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  /* Sauts de page : ne pas couper une formule, une ligne de tableau ou un
+     bloc au milieu ; répéter les en-têtes de tableau sur chaque page. */
+  .recap-print table,
+  .recap-print .card,
+  .recap-print .alert {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .recap-print tr,
+  .recap-print img {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .recap-print thead {
+    display: table-header-group;
+  }
+
+  .recap-print {
+    padding: 0 !important;
+    background: #fff !important;
+  }
+}
+
+/* ---------- Accessibilité ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .offer-recap .btn,
+  .offer-recap .card-header .btn-warning {
+    transition: none !important;
+  }
+  .offer-recap .btn:active,
+  .offer-recap .card-header .btn-warning:hover {
+    transform: none;
+  }
+}

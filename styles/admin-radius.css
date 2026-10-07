@@ -1,0 +1,96 @@
+/* ==========================================================================
+   Espace de gestion (administration, validateurs, opérateurs) : rayon unique
+   --------------------------------------------------------------------------
+   Préférence d'interface : border-radius de 8px sur les boutons, champs,
+   cartes, tableaux, dialogues et menus.
+
+   Importé EN DERNIER dans pages/_app.js, après le thème PrimeReact. Tout est
+   limité à `body.adm-ui`, classe posée d'après la route (`services/tools/adminUi.js`,
+   lue par pages/_document.js et pages/_app.js) : le site public n'est pas
+   touché. La classe est sur <body> parce que les dialogues et les menus
+   PrimeReact sont rendus hors de la page.
+
+   `:where(body.adm-ui)` ne pèse rien dans le calcul de priorité : ces règles
+   remplacent la valeur par défaut du thème (même poids, déclarées après) mais
+   laissent gagner les règles plus précises, celles qui annulent un angle
+   dans un groupe de champs ou de boutons accolés par exemple.
+
+   Volontairement laissés tels quels : pastilles et étiquettes arrondies
+   (999px), avatars et puces rondes (50 %), cases à cocher, interrupteurs,
+   barres de progression et de graphique, angles nuls.
+   ========================================================================== */
+
+body.adm-ui {
+  --adm-ui-radius: 8px;
+  /* Échelle Bootstrap du thème : petits, moyens et grands rayons ramenés à 8px. */
+  --fc-border-radius: var(--adm-ui-radius);
+  --fc-border-radius-sm: var(--adm-ui-radius);
+  --fc-border-radius-lg: var(--adm-ui-radius);
+  --fc-border-radius-xl: var(--adm-ui-radius);
+  /* Variables que le gabarit utilise sans jamais les définir (boutons
+     principaux, blocs de formulaire) : sans valeur, l'angle retombait à 0,
+     notamment dans les dialogues, rendus hors de la page. */
+  --radius: var(--adm-ui-radius);
+  --radius-sm: var(--adm-ui-radius);
+}
+
+/* ---------------------------------------------------------------- Bootstrap */
+:where(body.adm-ui) :is(.btn, .btn-lg, .btn-sm, .btn-group-lg > .btn, .btn-group-sm > .btn) { --fc-btn-border-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) :is(.form-control, .form-select, .input-group-text, .form-control-lg, .form-control-sm, .form-select-lg, .form-select-sm) { border-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .card { --fc-card-border-radius: var(--adm-ui-radius); --fc-card-inner-border-radius: calc(var(--adm-ui-radius) - 1px); }
+:where(body.adm-ui) .modal { --fc-modal-border-radius: var(--adm-ui-radius); --fc-modal-inner-border-radius: calc(var(--adm-ui-radius) - 1px); }
+:where(body.adm-ui) .dropdown-menu { --fc-dropdown-border-radius: var(--adm-ui-radius); --fc-dropdown-inner-border-radius: calc(var(--adm-ui-radius) - 1px); }
+:where(body.adm-ui) .toast { --fc-toast-border-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .popover { --fc-popover-border-radius: var(--adm-ui-radius); --fc-popover-inner-border-radius: calc(var(--adm-ui-radius) - 1px); }
+:where(body.adm-ui) :is(.pagination, .pagination-lg, .pagination-sm) { --fc-pagination-border-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .alert { --fc-alert-border-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .list-group { --fc-list-group-border-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .accordion { --fc-accordion-border-radius: var(--adm-ui-radius); --fc-accordion-inner-border-radius: calc(var(--adm-ui-radius) - 1px); }
+:where(body.adm-ui) .nav-pills { --fc-nav-pills-border-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .nav-tabs { --fc-nav-tabs-border-radius: var(--adm-ui-radius); }
+
+/* --------------------------------------------------------------- PrimeReact */
+/* Boutons. Les boutons ronds (`.p-button-rounded`) et les boutons accolés
+   gardent leur forme : leurs règles, plus précises, restent prioritaires. */
+:where(body.adm-ui) .p-button { border-radius: var(--adm-ui-radius); }
+
+/* Champs */
+:where(body.adm-ui) :is(.p-inputtext, .p-dropdown, .p-multiselect, .p-treeselect, .p-cascadeselect, .p-chips .p-chips-multiple-container, .p-autocomplete .p-autocomplete-multiple-container, .p-password-input, .p-inputtextarea) {
+  border-radius: var(--adm-ui-radius);
+}
+:where(body.adm-ui) .p-editor-container .p-editor-toolbar { border-top-left-radius: var(--adm-ui-radius); border-top-right-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .p-editor-container .p-editor-content { border-bottom-left-radius: var(--adm-ui-radius); border-bottom-right-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .p-fileupload .p-fileupload-buttonbar { border-top-left-radius: var(--adm-ui-radius); border-top-right-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .p-fileupload .p-fileupload-content { border-bottom-left-radius: var(--adm-ui-radius); border-bottom-right-radius: var(--adm-ui-radius); }
+
+/* Dialogues */
+:where(body.adm-ui) .p-dialog { border-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .p-dialog .p-dialog-header { border-top-left-radius: var(--adm-ui-radius); border-top-right-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .p-dialog .p-dialog-content:last-of-type,
+:where(body.adm-ui) .p-dialog .p-dialog-footer { border-bottom-left-radius: var(--adm-ui-radius); border-bottom-right-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .p-dialog.p-dialog-maximized,
+:where(body.adm-ui) .p-dialog.p-dialog-maximized :is(.p-dialog-header, .p-dialog-content, .p-dialog-footer) { border-radius: 0; }
+
+/* Menus et panneaux flottants */
+:where(body.adm-ui) :is(.p-menu, .p-tieredmenu, .p-contextmenu, .p-slidemenu, .p-menubar, .p-megamenu, .p-overlaypanel, .p-dropdown-panel, .p-multiselect-panel, .p-autocomplete-panel, .p-treeselect-panel, .p-cascadeselect-panel, .p-datepicker, .p-colorpicker-panel, .p-password-panel, .p-tooltip .p-tooltip-text) {
+  border-radius: var(--adm-ui-radius);
+}
+:where(body.adm-ui) .p-multiselect-panel .p-multiselect-header { border-top-left-radius: var(--adm-ui-radius); border-top-right-radius: var(--adm-ui-radius); }
+
+/* Cartes, panneaux, messages */
+:where(body.adm-ui) :is(.p-card, .p-fieldset, .p-toast .p-toast-message, .p-message, .p-inline-message, .p-paginator, .p-toolbar) { border-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .p-panel .p-panel-header { border-top-left-radius: var(--adm-ui-radius); border-top-right-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .p-panel .p-panel-content { border-bottom-left-radius: var(--adm-ui-radius); border-bottom-right-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .p-accordion .p-accordion-header .p-accordion-header-link { border-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .p-accordion .p-accordion-tab-active .p-accordion-header-link { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+:where(body.adm-ui) .p-accordion .p-accordion-content { border-bottom-left-radius: var(--adm-ui-radius); border-bottom-right-radius: var(--adm-ui-radius); }
+:where(body.adm-ui) .p-tabview .p-tabview-panels { border-bottom-left-radius: var(--adm-ui-radius); border-bottom-right-radius: var(--adm-ui-radius); }
+
+/* Notifications (react-toastify) */
+body.adm-ui .Toastify__toast { border-radius: var(--adm-ui-radius); }
+
+/* Angles intérieurs des champs à liste (bouton d'ouverture, à droite). */
+:where(body.adm-ui) :is(.p-dropdown .p-dropdown-trigger, .p-multiselect .p-multiselect-trigger, .p-treeselect .p-treeselect-trigger) {
+  border-top-right-radius: var(--adm-ui-radius);
+  border-bottom-right-radius: var(--adm-ui-radius);
+}

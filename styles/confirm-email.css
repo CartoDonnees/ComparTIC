@@ -1,0 +1,83 @@
+/* ==========================================================================
+   CompareTIC   Page de confirmation d'adresse e-mail
+   Préfixe `cfm-`. Importée dans pages/_app.js.
+   ========================================================================== */
+.cfm-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: linear-gradient(160deg, #f4f7fa 0%, #e9f1ec 100%);
+}
+.cfm-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 34px 30px 28px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #e6eaf0;
+  border-radius: 8px;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.10);
+}
+.cfm-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.9rem;
+  border-radius: 50%;
+}
+.cfm-icon--success { color: #03832e; background: #e6f6ec; }
+.cfm-icon--info    { color: #1d4ed8; background: #e8effd; }
+.cfm-icon--warning { color: #b45309; background: #fdf3e3; }
+.cfm-icon--danger  { color: #b91c1c; background: #fdeaea; }
+
+.cfm-title {
+  margin: 0 0 8px;
+  font-size: 1.24rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.cfm-text {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #475569;
+}
+.cfm-mail {
+  margin: 0 0 18px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #0b7285;
+  word-break: break-all;
+}
+.cfm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 18px;
+}
+.cfm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.58rem 1.15rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+.cfm-btn--primary { color: #fff; background: #03832e; }
+.cfm-btn--primary:hover { background: #026e26; color: #fff; }
+.cfm-btn--ghost { color: #475569; background: #fff; border-color: #dbe1ea; }
+.cfm-btn--ghost:hover { background: #f1f5f9; color: #0f172a; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cfm-btn { transition: none; }
+}

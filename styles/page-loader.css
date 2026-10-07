@@ -1,0 +1,122 @@
+/* ==========================================================================
+   Attente de chargement d'une page  - componnents/Loader/PageLoader.jsx
+   Couleurs de la plateforme : vert ARTCI (#03832e) → orange (#d65308).
+   ========================================================================== */
+
+.cpl {
+  --cpl-green: #03832e;
+  --cpl-green-dark: #0b3d2c;
+  --cpl-orange: #d65308;
+  --cpl-ink: #0f172a;
+  --cpl-muted: #64748b;
+  display: grid;
+  place-items: center;
+  color: var(--cpl-ink);
+}
+
+/* Plein écran : changement de page. */
+.cpl--overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: radial-gradient(120% 120% at 50% 0%, #ffffff 0%, #f4f7f5 55%, #eef2f7 100%);
+}
+
+/* Intégré dans une zone de contenu. */
+.cpl--inline { min-height: 320px; padding: 32px 16px; }
+
+.cpl-box { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 16px; }
+
+/* ---- Marque animée ----------------------------------------------------- */
+.cpl-mark { position: relative; display: grid; place-items: center; width: 132px; height: 132px; }
+
+.cpl-logo { width: 68px; height: 68px; position: relative; z-index: 1; }
+.cpl-core { fill: var(--cpl-orange); }
+.cpl-mast { fill: var(--cpl-green-dark); }
+.cpl-arc {
+  fill: none;
+  stroke: var(--cpl-green);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  opacity: 0.25;
+  animation: cpl-arc 1.8s ease-in-out infinite;
+}
+.cpl-arc--l1, .cpl-arc--r1 { animation-delay: 0.15s; }
+.cpl-arc--l2, .cpl-arc--r2 { animation-delay: 0.45s; stroke: var(--cpl-orange); }
+
+/* Ondes de propagation. */
+.cpl-wave {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(3, 131, 46, 0.35);
+  animation: cpl-wave 2.4s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+}
+.cpl-wave:nth-child(2) { animation-delay: 0.8s; border-color: rgba(214, 83, 8, 0.32); }
+.cpl-wave:nth-child(3) { animation-delay: 1.6s; }
+
+/* ---- Textes ------------------------------------------------------------ */
+.cpl-brand {
+  margin: 14px 0 2px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--cpl-green-dark);
+}
+.cpl-brand span { color: var(--cpl-orange); font-style: italic; }
+.cpl-title { margin: 0 0 14px; font-size: 0.95rem; font-weight: 600; color: var(--cpl-ink); }
+.cpl-hint {
+  margin: 10px 0 0;
+  min-height: 1.2em;
+  font-size: 0.8rem;
+  color: var(--cpl-muted);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.cpl-hint.is-visible { opacity: 1; }
+
+/* ---- Barre de progression indéterminée --------------------------------- */
+.cpl-bar {
+  position: relative;
+  width: min(260px, 70vw);
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+.cpl-bar > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 40%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--cpl-green), var(--cpl-orange));
+  animation: cpl-slide 1.25s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+/* ---- Animations -------------------------------------------------------- */
+@keyframes cpl-wave {
+  0% { transform: scale(0.55); opacity: 0.65; }
+  80% { opacity: 0; }
+  100% { transform: scale(1.15); opacity: 0; }
+}
+@keyframes cpl-arc {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+@keyframes cpl-slide {
+  0% { left: -45%; }
+  100% { left: 105%; }
+}
+
+/* ---- Accessibilité ----------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .cpl-wave { display: none; }
+  .cpl-arc { animation: none; opacity: 0.8; }
+  .cpl-bar > span { animation: none; left: 0; width: 100%; opacity: 0.6; }
+}
+
+@media (max-width: 575.98px) {
+  .cpl-mark { width: 104px; height: 104px; }
+  .cpl-logo { width: 56px; height: 56px; }
+  .cpl-brand { font-size: 1rem; }
+}

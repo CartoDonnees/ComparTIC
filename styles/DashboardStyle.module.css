@@ -1,0 +1,131 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap");
+
+.text-inherit {
+    color: var(--fc-gray-800);
+}
+
+.text-reset:hover {
+    color: var(--fc-primary) !important;
+}
+
+.text-inverse {
+    filter: brightness(0) invert(1);
+}
+
+.icon-xxs {
+    height: 1rem;
+    line-height: 1rem;
+    width: 1rem
+}
+
+.icon-xs {
+    height: 1.5rem;
+    line-height: 1.5rem;
+    width: 1.5rem
+}
+
+.icon-sm {
+    height: 2rem;
+    line-height: 2rem;
+    width: 2rem
+}
+
+.icon-md {
+    height: 2.5rem;
+    line-height: 2.5rem;
+    width: 2.5rem
+}
+
+.icon-lg {
+    height: 3rem;
+    line-height: 3rem;
+    width: 3rem
+}
+
+.icon-xl {
+    height: 3.5rem;
+    line-height: 3.5rem;
+    width: 3.5rem
+}
+
+.icon-xxl {
+    height: 4rem;
+    line-height: 4rem;
+    width: 4rem
+}
+
+.icon-xxxl {
+    height: 7rem;
+    line-height: 7rem;
+    width: 7rem
+}
+
+.icon-shape {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle
+}
+
+.border-dashed {
+    border: 1px dashed var(--fc-gray-300) !important
+}
+
+.img-zoom {
+    border-radius: .5rem;
+    overflow: hidden
+}
+
+.img-zoom img {
+    transition: transform .5s ease
+}
+
+.img-zoom img:hover {
+    transform: scale(1.1)
+}
+
+div.zoom {
+    background-position: 50% 50%;
+    border-radius: .5rem;
+    cursor: zoom-in;
+    overflow: hidden;
+    position: relative;
+    width: 100%
+}
+
+div.zoom img:hover {
+    opacity: 0
+}
+
+div.zoom img {
+    display: block;
+    transition: opacity .5s;
+    width: 100%
+}
+
+.simplebar-scrollbar:before {
+    background: var(--fc-gray-400);
+}
+
+.navbar-glass {
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    background-color: hsla(0, 0%, 100%, .8);
+    background-image: none;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: var(--fc-gray-600);
+    display: flex
+;
+    flex-direction: column;
+    flex-shrink: 0;
+    left: auto;
+    padding: 1rem;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: calc(100% - 280px);
+    z-index: 1034;
+}

@@ -1,0 +1,237 @@
+/* ==========================================================================
+   Modale de confirmation par code avant soumission d'une offre
+   (componnents/modal/offer/SubmissionCodeModal.jsx)
+   ========================================================================== */
+
+.sbc-dialog .p-dialog-content {
+  padding: 0;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+.sbc-dialog .p-dialog-header {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+.sbc-dialog .p-dialog-header .p-dialog-header-icon {
+  color: #fff;
+}
+
+.sbc-head {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.sbc-body {
+  padding: 22px 24px 18px;
+  color: #1c2430;
+}
+
+.sbc-intro {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #47566a;
+}
+
+.sbc-mail {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #03832e;
+  background: #f0f8f3;
+  border: 1px solid #cfe7d8;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 20px;
+  word-break: break-all;
+}
+
+.sbc-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.sbc-inputs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.sbc-digit {
+  width: 52px;
+  height: 62px;
+  border: 1.5px solid #d5dde5;
+  border-radius: 8px;
+  background: #fff;
+  text-align: center;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #16202c;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.sbc-digit:focus {
+  outline: none;
+  border-color: #03832e;
+  box-shadow: 0 0 0 3px rgba(3, 131, 46, 0.15);
+}
+.sbc-digit:disabled,
+.sbc-digit--off {
+  background: #f1f3f5;
+  color: #9aa5b1;
+}
+
+/* Sur petit écran, six cases de 52px ne tiennent pas : on les resserre. */
+@media (max-width: 480px) {
+  .sbc-inputs {
+    gap: 6px;
+  }
+  .sbc-digit {
+    width: 44px;
+    height: 54px;
+    font-size: 1.4rem;
+  }
+}
+
+.sbc-timer {
+  display: flex;
+  align-items: center;
+  font-size: 0.83rem;
+  color: #5b6b7c;
+  background: #f6f8fa;
+  border: 1px solid #e5eaef;
+  border-radius: 8px;
+  padding: 9px 12px;
+  margin-bottom: 14px;
+}
+.sbc-timer--off {
+  color: #92400e;
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+
+.sbc-alert {
+  display: flex;
+  align-items: flex-start;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  border: 1px solid transparent;
+}
+.sbc-alert--danger {
+  color: #991b1b;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+.sbc-alert--success {
+  color: #14532d;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+.sbc-alert--info {
+  color: #1e3a8a;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.sbc-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.sbc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.87rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    opacity 0.15s ease;
+}
+.sbc-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.sbc-btn--primary {
+  /* Bouton principal : occupe l'espace restant, à droite. */
+  margin-left: auto;
+  background: #03832e;
+  border-color: #03832e;
+  color: #fff;
+}
+.sbc-btn--primary:not(:disabled):hover {
+  background: #026d26;
+}
+
+.sbc-btn--ghost {
+  background: #fff;
+  border-color: #d5dde5;
+  color: #46566a;
+}
+.sbc-btn--ghost:not(:disabled):hover {
+  background: #f5f7f9;
+}
+
+.sbc-btn--link {
+  background: transparent;
+  color: #0b6bcb;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+.sbc-btn--link:not(:disabled):hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 520px) {
+  .sbc-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .sbc-btn--primary {
+    margin-left: 0;
+  }
+}
+
+.sbc-spin {
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: sbc-spin 0.7s linear infinite;
+}
+@keyframes sbc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sbc-foot {
+  margin: 16px 0 0;
+  font-size: 0.76rem;
+  color: #8593a3;
+  text-align: center;
+}

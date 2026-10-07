@@ -1,0 +1,285 @@
+/* ==========================================================================
+   CompareTIC   Espace ADMINISTRATEUR & OPÉRATEUR : modernisation du design
+   --------------------------------------------------------------------------
+   Importé APRÈS globals.css dans pages/_app.js (peut donc surcharger).
+   Tout est scopé au layout admin/opérateur :
+     - en-tête : .adh (styles/admin-header.css)
+     - sidebar : .adsb (styles/admin-sidebar.css)
+     - contenu : .main-content-wrapper
+   Les pages admin ET opérateur passent par AdminMainContainerPage, donc ces
+   styles s'appliquent aux deux. On NE TOUCHE PAS au positionnement (sidebar
+   fixe 13vw / header 6vh)   uniquement couleurs, ombres, rayons, espacements.
+   ========================================================================== */
+
+.main-content-wrapper {
+  /* ----- Tokens (contenu) ----- */
+  --adm-bg: #eef2f7;
+  --adm-surface: #ffffff;
+  --adm-border: #e3e8ef;
+  --adm-ink: #0f172a;
+  --adm-muted: #64748b;
+  --adm-green: #0b7a35;
+  --adm-orange: #f57c00;
+  --adm-orange-600: #e06f00;
+  --adm-radius: 8px;
+  --adm-radius-sm: 8px;
+  --adm-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+  --adm-shadow-md: 0 6px 18px rgba(15, 23, 42, 0.08);
+  --adm-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Canevas moderne gris clair derrière les cartes */
+  background: var(--adm-bg);
+  min-height: 94vh;
+  /* L'en-tête est `position: fixed` : sans compensation, le haut du contenu
+     passe dessous. On s'appuie sur --adh-h (styles/admin-header.css) plutôt
+     que sur 6vh, qui donnait un en-tête riquiqui sur écran court et un
+     décalage faux sur grand écran. */
+  padding: calc(var(--adh-h, 62px) + 16px) 18px 20px 18px;
+}
+
+/* ==========================================================================
+   1. EN-TÊTE
+   --------------------------------------------------------------------------
+   Les styles de l en-tête vivent désormais dans styles/admin-header.css
+   (classe .adh). Les règles qui ciblaient .bg-admin-header / .navbar-glass
+   ont été retirées : ces classes n existent plus dans le composant.
+   ========================================================================== */
+
+/* ==========================================================================
+   2. SIDEBAR (barre verticale)
+   ========================================================================== */
+/* La barre latérale est `position: fixed` : elle ne réserve plus d espace
+   dans le flux. Le contenu compense sa largeur par une marge, annulée sous
+   1200 px où la barre devient un tiroir coulissant. */
+.main-wrapper .main-content-wrapper {
+  margin-left: var(--adsb-w, 236px);
+}
+@media (max-width: 1199.98px) {
+  .main-wrapper .main-content-wrapper {
+    margin-left: 0;
+  }
+}
+
+/* Les anciennes règles `.navbar-vertical-nav` (fond, items, item actif) ont
+   été retirées : la barre latérale est reconstruite sur la classe .adsb, dans
+   styles/admin-sidebar.css. Elles ne ciblaient plus aucun élément. */
+
+/* ==========================================================================
+   3. EN-TÊTES DE PAGE (bandeaux ".bg-dark" en haut de chaque écran)
+   ========================================================================== */
+.main-content-wrapper .bg-dark {
+  background: linear-gradient(110deg, #1f2937, #0f172a) !important;
+  border-radius: var(--adm-radius-sm);
+  box-shadow: var(--adm-shadow-sm);
+  border: none;
+}
+
+/* ==========================================================================
+   4. CARTES & CONTENEURS
+   ========================================================================== */
+.main-content-wrapper .card,
+.main-content-wrapper .main-card,
+.main-content-wrapper .widget-chart {
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius);
+  box-shadow: var(--adm-shadow-sm);
+  transition: box-shadow 0.22s var(--adm-ease), transform 0.22s var(--adm-ease);
+}
+.main-content-wrapper .card:hover,
+.main-content-wrapper .widget-chart:hover {
+  box-shadow: var(--adm-shadow-md);
+}
+/* Adoucit l'ombre très dure de .lcard-bx en zone admin */
+.main-content-wrapper .lcard-bx,
+.main-content-wrapper.lcard-bx {
+  box-shadow: var(--adm-shadow-sm) !important;
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius) !important;
+}
+
+/* Cartes statistiques (widgets) */
+.main-content-wrapper .card-shadow-primary {
+  background: var(--adm-surface);
+}
+.main-content-wrapper .widget-subheading {
+  font-weight: 800;
+  color: var(--adm-ink);
+}
+
+/* Alertes / encarts info adoucis */
+.main-content-wrapper .alert-info {
+  background: #eef6ff;
+  border: 1px solid #d7e9ff;
+  color: #1e3a5f;
+  border-radius: var(--adm-radius);
+}
+.main-content-wrapper .alert-warning {
+  border-radius: var(--adm-radius);
+}
+
+/* ==========================================================================
+   5. BOUTONS
+   ========================================================================== */
+.main-content-wrapper .btn {
+  border-radius: var(--adm-radius-sm);
+  font-weight: 600;
+  transition: background-color 0.18s var(--adm-ease), color 0.18s var(--adm-ease),
+    box-shadow 0.18s var(--adm-ease), transform 0.12s var(--adm-ease);
+}
+.main-content-wrapper .btn:hover {
+  transform: translateY(-1px);
+}
+.main-content-wrapper .btn:active {
+  transform: translateY(0) scale(0.99);
+}
+.main-content-wrapper .btn-primary {
+  background: linear-gradient(135deg, #fa8520, #f57c00);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(245, 124, 0, 0.25);
+}
+.main-content-wrapper .btn-primary:hover {
+  background: linear-gradient(135deg, #f57c00, #e06f00);
+}
+.main-content-wrapper .btn-success {
+  background: linear-gradient(135deg, #149a51, #0b7a35);
+  border-color: transparent;
+}
+.main-content-wrapper .btn-dark {
+  background: linear-gradient(135deg, #1f2937, #0f172a);
+  border-color: transparent;
+}
+
+/* ==========================================================================
+   6. TABLES (PrimeReact DataTable)
+   ========================================================================== */
+.main-content-wrapper .p-datatable {
+  border-radius: var(--adm-radius);
+  overflow: hidden;
+  border: 1px solid var(--adm-border);
+  box-shadow: var(--adm-shadow-sm);
+}
+.main-content-wrapper .p-datatable .p-datatable-thead > tr > th {
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border-color: var(--adm-border);
+}
+.main-content-wrapper .p-datatable .p-datatable-tbody > tr > td {
+  border-color: #eef2f7;
+  font-size: 0.9rem;
+}
+.main-content-wrapper .p-datatable .p-datatable-tbody > tr:hover {
+  background: #f6f9fc;
+}
+.main-content-wrapper .p-datatable .p-paginator {
+  background: transparent;
+  border: none;
+}
+.main-content-wrapper .p-datatable .p-paginator .p-paginator-page.p-highlight {
+  background: var(--adm-orange);
+  border-color: var(--adm-orange);
+  color: #fff;
+}
+
+/* Toolbar / boutons d'export PrimeReact */
+.main-content-wrapper .p-button {
+  border-radius: var(--adm-radius-sm);
+}
+
+/* ==========================================================================
+   7. CHAMPS DE FORMULAIRE
+   ========================================================================== */
+.main-content-wrapper .form-control,
+.main-content-wrapper .p-inputtext,
+.main-content-wrapper .p-dropdown,
+.main-content-wrapper .p-multiselect {
+  border-radius: var(--adm-radius-sm);
+  border-color: var(--adm-border);
+  transition: border-color 0.18s var(--adm-ease), box-shadow 0.18s var(--adm-ease);
+}
+.main-content-wrapper .form-control:focus,
+.main-content-wrapper .p-inputtext:enabled:focus {
+  border-color: var(--adm-orange);
+  box-shadow: 0 0 0 3px rgba(245, 124, 0, 0.18);
+}
+
+/* ==========================================================================
+   8. BADGES / PASTILLES
+   ========================================================================== */
+.main-content-wrapper .badge {
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ==========================================================================
+   9. ACCESSIBILITÉ   réduction des animations
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .main-content-wrapper .btn,
+  .main-content-wrapper .card,
+  .main-content-wrapper .widget-chart {
+    transition: none !important;
+  }
+  .main-content-wrapper .btn:hover {
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   Pied de page de l'espace de gestion (componnents/layouts/footer/AdminFooter)
+   ========================================================================== */
+.adf {
+  margin-top: 28px;
+  padding: 14px 0 6px;
+  border-top: 1px solid var(--adm-border, #e3e8ef);
+  color: var(--adm-muted, #64748b);
+  font-size: 0.8rem;
+}
+.adf-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 18px;
+}
+.adf-left strong { color: var(--adm-ink, #0f172a); font-weight: 700; }
+.adf-left em { color: var(--adm-orange, #f57c00); font-style: italic; }
+.adf-left, .adf-right { margin: 0; }
+.adf-links { display: flex; flex-wrap: wrap; gap: 14px; }
+.adf-links a { color: var(--adm-muted, #64748b); text-decoration: none; }
+.adf-links a:hover { color: var(--adm-green, #0b7a35); text-decoration: underline; }
+@media (max-width: 767.98px) {
+  .adf-inner { flex-direction: column; align-items: flex-start; }
+}
+
+/* Logo d'opérateur avec repli sur les initiales (componnents/common/OperatorLogo) */
+.oplogo {
+  display: inline-grid;
+  place-items: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid var(--op);
+  background: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.oplogo img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Logo d'opérateur avec repli sur les initiales (componnents/common/OperatorLogo) */
+.oplogo {
+  display: inline-grid;
+  place-items: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid var(--op);
+  background: #fff;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.oplogo img { width: 100%; height: 100%; object-fit: contain; }

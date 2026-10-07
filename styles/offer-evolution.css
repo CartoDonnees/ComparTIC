@@ -1,0 +1,99 @@
+/* ==========================================================================
+   Suivi de mes offres (opérateur) : évolution d'une offre, présent et passé
+   componnents/screens/admin/operator/activity/OperatorActivityPage.jsx
+   ========================================================================== */
+.evo {
+  --evo-border: #e2e8f0;
+  --evo-line: #e7ecf2;
+  --evo-ink: #0f172a;
+  --evo-muted: #64748b;
+  --evo-soft: #f8fafc;
+  --evo-accent: #03832e;
+}
+
+/* ---- Filtres et recherche ---- */
+.evo-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin: 14px 0; }
+.evo-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.evo-filters button {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 6px 12px;
+  border: 1px solid var(--evo-border); border-radius: 8px; background: #fff; color: #475569;
+  font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.evo-filters button:hover { background: var(--evo-soft); }
+.evo-filters button.is-active { background: #e8f5ec; border-color: #b7dfc3; color: #1f5a37; }
+.evo-filters button span { padding: 0 6px; border-radius: 999px; background: rgba(15, 23, 42, 0.07); font-size: 0.7rem; }
+.evo-search { display: flex; align-items: center; gap: 8px; min-width: min(280px, 100%); margin: 0; padding: 0 10px; border: 1px solid var(--evo-border); border-radius: 8px; background: #fff; color: var(--evo-muted); }
+.evo-search input { flex: 1; min-width: 0; height: 34px; border: 0; outline: none; background: none; font-size: 0.84rem; color: var(--evo-ink); }
+.evo-search:focus-within { border-color: #9fd3b0; box-shadow: 0 0 0 3px rgba(3, 131, 46, 0.1); }
+
+/* ---- Carte d'une offre ---- */
+.evo-list { display: grid; gap: 12px; }
+.evo-card { border: 1px solid var(--evo-border); border-radius: 8px; background: #fff; overflow: hidden; }
+.evo-card-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 14px 16px 10px; }
+.evo-card-title { min-width: 0; }
+.evo-card-title h2 { margin: 0 0 4px; font-size: 1rem; font-weight: 700; color: var(--evo-ink); overflow-wrap: anywhere; }
+.evo-card-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 0.78rem; color: var(--evo-muted); }
+.evo-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.74rem; color: #475569; }
+.evo-muted { font-size: 0.78rem; color: var(--evo-muted); }
+
+.evo-btn {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 6px 12px;
+  border: 1px solid #d8e0e8; border-radius: 8px; background: #fff; color: #3f5164;
+  font-size: 0.8rem; font-weight: 600; white-space: nowrap; cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.evo-btn:hover:not(:disabled) { background: #f5f8fa; border-color: #c5d0db; }
+.evo-btn:disabled { opacity: 0.6; cursor: progress; }
+
+/* ---- Présent ---- */
+.evo-now { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 16px; padding: 10px 12px; border-radius: 8px; background: var(--evo-soft); font-size: 0.84rem; color: #334155; }
+.evo-now-text { flex: 1; min-width: 200px; }
+.evo-now time { color: var(--evo-muted); }
+.evo-tag { padding: 2px 8px; border-radius: 999px; background: #0f172a; color: #fff; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+.evo-now.evo-tone-success { background: #f0f9f3; }
+.evo-now.evo-tone-danger { background: #fef4f4; }
+.evo-now.evo-tone-warning { background: #fff9ea; }
+.evo-now.evo-tone-info { background: #f1f7fd; }
+
+.evo-toggle { display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 16px; border: 0; background: none; color: var(--evo-accent); font-size: 0.82rem; font-weight: 600; text-align: left; cursor: pointer; }
+.evo-toggle:hover { background: var(--evo-soft); }
+.evo-toggle small { margin-left: auto; font-weight: 500; color: var(--evo-muted); }
+
+/* ---- Passé : versions et étapes ---- */
+.evo-past { padding: 4px 16px 14px; border-top: 1px solid var(--evo-line); }
+.evo-version { position: relative; padding: 12px 0 0 0; }
+.evo-version + .evo-version { margin-top: 6px; border-top: 1px dashed var(--evo-border); }
+.evo-version-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.evo-version-node { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; background: #eef2f6; color: #475569; font-size: 0.72rem; font-weight: 700; }
+.evo-version.is-current .evo-version-node { background: #e8f5ec; color: #1f5a37; }
+.evo-version-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; flex: 1; min-width: 180px; font-size: 0.86rem; color: var(--evo-ink); }
+
+.evo-changes { margin: 10px 0 0 42px; padding: 10px 12px; border: 1px solid var(--evo-line); border-radius: 8px; background: var(--evo-soft); }
+.evo-changes-title { margin-bottom: 6px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #475569; }
+.evo-changes ul { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.evo-changes p { margin: 0; }
+.evo-change { display: flex; align-items: flex-start; gap: 8px; font-size: 0.82rem; color: #334155; }
+.evo-change > .bi { margin-top: 2px; color: #64748b; }
+.evo-change--added > .bi { color: #15803d; }
+.evo-change--removed > .bi { color: #b91c1c; }
+.evo-change s { color: var(--evo-muted); }
+.evo-change .bi-arrow-right { font-size: 0.7rem; color: var(--evo-muted); }
+
+.evo-line { position: relative; margin: 10px 0 0 15px; padding: 0 0 0 27px; list-style: none; border-left: 2px solid var(--evo-line); }
+.evo-step { position: relative; padding: 0 0 12px; }
+.evo-step:last-child { padding-bottom: 2px; }
+.evo-step-node { position: absolute; left: -40px; top: 0; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff; background: #eef2f6; color: #64748b; font-size: 0.72rem; }
+.evo-step.evo-tone-success .evo-step-node { background: #dcfce7; color: #15803d; }
+.evo-step.evo-tone-danger .evo-step-node { background: #fee2e2; color: #b91c1c; }
+.evo-step.evo-tone-warning .evo-step-node { background: #fef3c7; color: #92400e; }
+.evo-step.evo-tone-info .evo-step-node { background: #e0effc; color: #1e4f7a; }
+.evo-step-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; font-size: 0.84rem; color: var(--evo-ink); }
+.evo-step-head time { font-size: 0.76rem; color: var(--evo-muted); }
+.evo-comment { margin: 4px 0 0; padding: 6px 10px; border-radius: 8px; background: var(--evo-soft); font-size: 0.82rem; color: #334155; }
+.evo-step--empty { padding-bottom: 2px; }
+
+@media (max-width: 640px) {
+  .evo-changes { margin-left: 0; }
+  .evo-card-actions, .evo-card-actions .evo-btn { width: 100%; justify-content: center; }
+}

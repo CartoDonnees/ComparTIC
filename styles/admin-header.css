@@ -1,0 +1,510 @@
+/* ==========================================================================
+   CompareTIC   En-tête de l'espace admin / opérateur
+   --------------------------------------------------------------------------
+   Préfixe `adh-`. Remplace le gabarit Bootstrap d'origine (navbar-glass +
+   dropdowns) : les menus sont pilotés en React, plus par le JS de Bootstrap.
+
+   Importé après admin.css dans pages/_app.js.
+   ========================================================================== */
+
+:root {
+  /* Hauteur de l en-tête, partagée avec .main-content-wrapper (admin.css). */
+  --adh-h: 62px;
+  /* La barre latérale expose sa largeur via --adsb-w (admin-sidebar.css).
+     NB : le gabarit d origine déclarait trois largeurs contradictoires
+     (280px, 13vw, et un style en ligne de 201px) ; c est ce qui décalait
+     l en-tête par rapport à la barre. */
+  --adh-side: var(--adsb-w, 236px);
+}
+
+.adh {
+  --adh-ink: #03832e;
+  --adh-muted: #113326;
+  --adh-border: #e6eaf0;
+  --adh-accent: #03832e;
+
+  /* Reprend le positionnement de l ancien en-tête (position: fixed, décalé de
+     la largeur de la barre latérale) : le padding haut de
+     .main-content-wrapper compense déjà cette hauteur. */
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: var(--adh-side);
+  z-index: 1034;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: var(--adh-h);
+  padding: 0 16px;
+  background: linear-gradient(100deg, #03832e 0%, #0f3d2e 45%, #d65308 100%);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.18);
+}
+
+/* Bouton tiroir : visible uniquement quand la barre latérale est repliée. */
+.adh-burger {
+  display: none;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  cursor: pointer;
+}
+@media (max-width: 1199.98px) {
+  .adh-burger {
+    display: flex;
+  }
+}
+
+/* ==========================================================================
+   1. Identité
+   ========================================================================== */
+.adh-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  /* Colle l identité au bouton tiroir et repousse les actions à droite : avec
+     le seul `space-between` du conteneur, l ajout du bouton aurait centré
+     l identité. */
+  margin-right: auto;
+}
+.adh-brand-mark {
+  flex: 0 0 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 1.15rem;
+}
+.adh-brand-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+.adh-brand-title {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+.adh-brand-sub {
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.78);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   2. Actions (cloche + compte)
+   ========================================================================== */
+.adh-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.adh-menu-wrap {
+  position: relative;
+}
+
+.adh-icon-btn {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.adh-icon-btn:hover,
+.adh-icon-btn.active {
+  background: rgba(255, 255, 255, 0.24);
+}
+.adh-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: #fff;
+  background: #dc2626;
+  border: 2px solid #0f3d2e;
+  border-radius: 999px;
+}
+
+.adh-user-btn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 38px;
+  padding: 0 10px 0 5px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.adh-user-btn:hover,
+.adh-user-btn.active {
+  background: rgba(255, 255, 255, 0.24);
+}
+.adh-user-name {
+  max-width: 160px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.adh-caret {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.adh-avatar {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #0f3d2e;
+  background: #fff;
+  border-radius: 50%;
+}
+.adh-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.adh-avatar-lg {
+  flex-basis: 42px;
+  width: 42px;
+  height: 42px;
+  font-size: 0.95rem;
+  background: #eef3fa;
+  color: var(--adh-accent);
+}
+
+/* ==========================================================================
+   3. Panneaux déroulants
+   ========================================================================== */
+.adh-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 380px;
+  max-width: calc(100vw - 24px);
+  background: #fff;
+  border: 1px solid var(--adh-border);
+  border-radius: 8px;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.22);
+  overflow: hidden;
+  animation: adh-pop 0.16s ease-out;
+}
+.adh-panel-sm {
+  width: 270px;
+}
+@keyframes adh-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.adh-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--adh-border);
+  background: #f7f9fc;
+}
+.adh-panel-head h6 {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--adh-ink);
+}
+.adh-panel-head p {
+  margin: 2px 0 0 0;
+  font-size: 0.76rem;
+  color: var(--adh-muted);
+}
+.adh-link {
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--adh-accent);
+  background: none;
+  border: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.adh-link:hover {
+  text-decoration: underline;
+}
+
+.adh-panel-body {
+  max-height: 340px;
+  overflow-y: auto;
+}
+.adh-panel-foot {
+  border-top: 1px solid var(--adh-border);
+}
+
+.adh-empty {
+  padding: 34px 16px;
+  text-align: center;
+  font-size: 0.84rem;
+  color: var(--adh-muted);
+}
+.adh-empty i {
+  font-size: 1.6rem;
+  opacity: 0.45;
+}
+
+/* ---- Une notification ---- */
+.adh-notif {
+  position: relative;
+  display: flex;
+  gap: 11px;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  background: #fff;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background-color 0.13s ease;
+}
+.adh-notif:hover {
+  background: #f7f9fc;
+}
+.adh-notif.unread {
+  background: #f4faf6;
+}
+.adh-notif.unread:hover {
+  background: #eaf6ee;
+}
+.adh-notif-icon {
+  flex: 0 0 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 0.92rem;
+}
+.adh-notif-icon.tone-success {
+  color: #03832e;
+  background: #e6f6ec;
+}
+.adh-notif-icon.tone-danger {
+  color: #b91c1c;
+  background: #fdeaea;
+}
+.adh-notif-icon.tone-warning {
+  color: #b45309;
+  background: #fdf3e3;
+}
+.adh-notif-icon.tone-primary {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+.adh-notif-icon.tone-info {
+  color: #1d4ed8;
+  background: #e8effd;
+}
+
+.adh-notif-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+.adh-notif-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--adh-ink);
+}
+.adh-notif-body {
+  font-size: 0.79rem;
+  line-height: 1.45;
+  color: #475569;
+  /* Trois lignes maximum : le panneau reste parcourable d'un coup d'œil. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.adh-notif-time {
+  font-size: 0.71rem;
+  color: #94a3b8;
+}
+.adh-dot {
+  position: absolute;
+  top: 16px;
+  right: 12px;
+  width: 7px;
+  height: 7px;
+  background: var(--adh-accent);
+  border-radius: 50%;
+}
+
+/* ---- Menu utilisateur ---- */
+.adh-user-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--adh-border);
+  background: #f7f9fc;
+}
+.adh-user-head strong {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--adh-ink);
+}
+.adh-user-head small {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--adh-muted);
+  word-break: break-all;
+}
+.adh-user-head .adh-role {
+  margin-top: 3px;
+  font-weight: 700;
+  color: var(--adh-accent);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.66rem;
+}
+
+.adh-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  color: var(--adh-ink);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.13s ease;
+}
+.adh-item:hover {
+  background: #f1f5f9;
+  color: var(--adh-ink);
+}
+.adh-item i {
+  width: 1.1em;
+  color: var(--adh-muted);
+}
+.adh-item.danger {
+  color: #b91c1c;
+}
+.adh-item.danger i {
+  color: #b91c1c;
+}
+.adh-item.danger:hover {
+  background: #fdeaea;
+}
+
+/* ==========================================================================
+   4. Responsive
+   ========================================================================== */
+/* La barre latérale est masquée sous 1200px : sans cette règle, un vide
+   apparaissait à gauche de l en-tête. */
+@media (max-width: 1199.98px) {
+  .adh {
+    left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .adh {
+    padding: 0 10px;
+  }
+  .adh-brand-sub {
+    display: none;
+  }
+  .adh-user-name {
+    display: none;
+  }
+  .adh-user-btn {
+    padding: 0 5px;
+  }
+  .adh-caret {
+    display: none;
+  }
+  .adh-panel {
+    position: fixed;
+    top: calc(var(--adh-h) + 6px);
+    right: 8px;
+    left: 8px;
+    width: auto;
+  }
+}
+
+/* ==========================================================================
+   5. Accessibilité
+   ========================================================================== */
+.adh-icon-btn:focus-visible,
+.adh-user-btn:focus-visible,
+.adh-notif:focus-visible,
+.adh-item:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+.adh-notif:focus-visible,
+.adh-item:focus-visible {
+  outline-color: var(--adh-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adh-panel {
+    animation: none;
+  }
+  .adh-icon-btn,
+  .adh-user-btn,
+  .adh-notif,
+  .adh-item {
+    transition: none;
+  }
+}

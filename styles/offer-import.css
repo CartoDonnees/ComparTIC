@@ -1,0 +1,649 @@
+/* Import d'offres par fichier Excel  - composant OfferExcelImport.
+   Le thème PrimeReact est chargé après ce fichier : les sélecteurs sont
+   préfixés par .p-dialog.oxi-dialog pour garder la main. */
+
+.oxi-dialog,
+.oxi-confirm {
+  --oxi-ink: #0f172a;
+  --oxi-muted: #64748b;
+  --oxi-border: #e5e9f0;
+  --oxi-soft: #f7f9fc;
+  --oxi-orange: #f57c00;
+  --oxi-orange-soft: #fff3e6;
+  --oxi-green: #0e9f46;
+  --oxi-green-soft: #e8f6ee;
+  --oxi-red: #dc2626;
+  --oxi-red-soft: #fdecec;
+  --oxi-amber: #b45309;
+  --oxi-amber-soft: #fff7e0;
+  --oxi-blue: #2563eb;
+  --oxi-blue-soft: #eef3fe;
+  --oxi-radius: 8px;
+}
+
+.p-dialog.oxi-dialog,
+.p-dialog.oxi-confirm {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+}
+.p-dialog.oxi-dialog .p-dialog-header,
+.p-dialog.oxi-confirm .p-dialog-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--oxi-border);
+  background: #fff;
+}
+.p-dialog.oxi-confirm .p-dialog-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--oxi-ink);
+}
+.p-dialog.oxi-dialog .p-dialog-header-icons {
+  align-self: flex-start;
+}
+.p-dialog.oxi-dialog .p-dialog-content,
+.p-dialog.oxi-confirm .p-dialog-content {
+  padding: 18px 20px 20px;
+  color: var(--oxi-ink);
+  font-size: 0.9rem;
+}
+
+/* ------------------------------------------------------------ en-tête */
+.oxi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-right: 8px;
+}
+.oxi-header__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--oxi-ink);
+}
+.oxi-header__title .fa {
+  color: #1d6f42;
+  margin-right: 6px;
+}
+.oxi-header__sub {
+  margin-top: 2px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--oxi-muted);
+}
+
+/* ------------------------------------------------------------ boutons */
+.oxi-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+.oxi-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.oxi-btn--primary {
+  background: var(--oxi-orange);
+  color: #fff;
+}
+.oxi-btn--primary:hover:not(:disabled) {
+  background: #e06f00;
+  color: #fff;
+}
+.oxi-btn--ghost {
+  background: #fff;
+  border-color: var(--oxi-border);
+  color: var(--oxi-ink);
+}
+.oxi-btn--ghost:hover:not(:disabled) {
+  background: var(--oxi-soft);
+}
+.oxi-btn--template {
+  background: var(--oxi-green-soft);
+  border-color: #bfe6cd;
+  color: #11683a;
+}
+.oxi-btn--template:hover:not(:disabled) {
+  background: #dcf1e4;
+}
+.oxi-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--oxi-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.oxi-icon-btn:hover {
+  background: var(--oxi-soft);
+  color: var(--oxi-ink);
+}
+
+/* ------------------------------------------------------------ étapes */
+.oxi-steps {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+.oxi-steps li {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--oxi-soft);
+  color: var(--oxi-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.oxi-steps__dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid var(--oxi-border);
+  font-size: 0.75rem;
+}
+.oxi-steps li.is-current {
+  background: var(--oxi-orange-soft);
+  color: #b45309;
+}
+.oxi-steps li.is-current .oxi-steps__dot {
+  background: var(--oxi-orange);
+  border-color: var(--oxi-orange);
+  color: #fff;
+}
+.oxi-steps li.is-done {
+  background: var(--oxi-green-soft);
+  color: #11683a;
+}
+.oxi-steps li.is-done .oxi-steps__dot {
+  background: var(--oxi-green);
+  border-color: var(--oxi-green);
+  color: #fff;
+}
+
+/* ------------------------------------------------------------ étape fichier */
+.oxi-file {
+  display: grid;
+  gap: 14px;
+}
+.oxi-card {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--oxi-border);
+  border-radius: var(--oxi-radius);
+  background: #fff;
+}
+.oxi-card--template {
+  background: linear-gradient(180deg, #fbfdfb 0%, #fff 100%);
+}
+.oxi-card__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--oxi-orange-soft);
+  color: var(--oxi-orange);
+  font-weight: 700;
+}
+.oxi-card__body {
+  flex: 1;
+  min-width: 0;
+}
+.oxi-card__body h3 {
+  margin: 3px 0 6px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--oxi-ink);
+}
+.oxi-card__body p {
+  margin: 0 0 12px;
+  color: var(--oxi-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.oxi-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 26px 16px;
+  border: 1.5px dashed #cbd5e1;
+  border-radius: var(--oxi-radius);
+  background: var(--oxi-soft);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.oxi-drop:hover,
+.oxi-drop:focus-visible {
+  border-color: var(--oxi-orange);
+  background: #fffaf4;
+  outline: none;
+}
+.oxi-drop.is-over {
+  border-color: var(--oxi-orange);
+  background: var(--oxi-orange-soft);
+}
+.oxi-drop .bi {
+  font-size: 1.9rem;
+  color: var(--oxi-orange);
+}
+.oxi-drop__title {
+  font-weight: 600;
+  color: var(--oxi-ink);
+}
+.oxi-drop__sub {
+  font-size: 0.8rem;
+  color: var(--oxi-muted);
+}
+
+.oxi-filechip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #bfe6cd;
+  border-radius: 8px;
+  background: var(--oxi-green-soft);
+}
+.oxi-filechip > .fa {
+  font-size: 1.4rem;
+  color: #1d6f42;
+}
+.oxi-filechip__info {
+  flex: 1;
+  min-width: 0;
+}
+.oxi-filechip__name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.oxi-filechip__meta {
+  font-size: 0.78rem;
+  color: var(--oxi-muted);
+}
+.oxi-filechip--compact {
+  margin: 0 0 12px;
+  background: var(--oxi-soft);
+  border-color: var(--oxi-border);
+}
+
+/* ------------------------------------------------------------ alertes */
+.oxi-alert {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+.oxi-alert .bi {
+  margin-right: 4px;
+}
+.oxi-alert--error {
+  background: var(--oxi-red-soft);
+  border-color: #f8caca;
+  color: #991b1b;
+}
+.oxi-alert--warning {
+  background: var(--oxi-amber-soft);
+  border-color: #f6dea0;
+  color: #854d0e;
+}
+.oxi-alert--success {
+  background: var(--oxi-green-soft);
+  border-color: #bfe6cd;
+  color: #11683a;
+}
+.oxi-alert .oxi-btn {
+  margin-top: 10px;
+}
+.oxi-structure {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 0.82rem;
+}
+
+/* ------------------------------------------------------------ statistiques */
+.oxi-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.oxi-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--oxi-border);
+  border-radius: var(--oxi-radius);
+  background: #fff;
+}
+.oxi-stat > .bi {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 8px;
+  background: var(--oxi-soft);
+  color: var(--oxi-muted);
+}
+.oxi-stat__value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.oxi-stat__label {
+  font-size: 0.76rem;
+  color: var(--oxi-muted);
+}
+.oxi-stat--success > .bi {
+  background: var(--oxi-green-soft);
+  color: var(--oxi-green);
+}
+.oxi-stat--danger > .bi {
+  background: var(--oxi-red-soft);
+  color: var(--oxi-red);
+}
+.oxi-stat--warning > .bi {
+  background: var(--oxi-amber-soft);
+  color: var(--oxi-amber);
+}
+
+/* ------------------------------------------------------------ onglets */
+.oxi-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 14px 0 10px;
+  border-bottom: 1px solid var(--oxi-border);
+}
+.oxi-tabs > button {
+  padding: 8px 12px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: none;
+  color: var(--oxi-muted);
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.oxi-tabs > button.is-active {
+  color: var(--oxi-orange);
+  border-bottom-color: var(--oxi-orange);
+}
+.oxi-tabs > .oxi-tabs__report {
+  margin-left: auto;
+  color: var(--oxi-blue);
+}
+.oxi-tabs > .oxi-tabs__report:hover {
+  color: #1d4ed8;
+}
+
+.oxi-filters {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: 10px;
+  padding: 3px;
+  border-radius: 8px;
+  background: var(--oxi-soft);
+}
+.oxi-filters > button {
+  padding: 5px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--oxi-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.oxi-filters > button.is-active {
+  background: #fff;
+  color: var(--oxi-ink);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+/* ------------------------------------------------------------ tableaux */
+.oxi-table-wrap {
+  max-height: 46vh;
+  overflow: auto;
+  border: 1px solid var(--oxi-border);
+  border-radius: var(--oxi-radius);
+}
+.oxi-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+.oxi-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 8px 10px;
+  background: var(--oxi-soft);
+  border-bottom: 1px solid var(--oxi-border);
+  color: var(--oxi-muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-align: left;
+  white-space: nowrap;
+}
+.oxi-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eef1f5;
+  vertical-align: top;
+}
+.oxi-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.oxi-table tbody tr.is-invalid > td {
+  background: #fffafa;
+}
+.oxi-table tr.oxi-subrow > td {
+  background: var(--oxi-soft);
+  padding-top: 4px;
+}
+.oxi-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.oxi-strong {
+  font-weight: 600;
+}
+.oxi-muted {
+  color: var(--oxi-muted);
+  font-size: 0.76rem;
+}
+.oxi-value {
+  max-width: 220px;
+  word-break: break-word;
+}
+
+.oxi-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--oxi-soft);
+  color: var(--oxi-muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.oxi-badge--success {
+  background: var(--oxi-green-soft);
+  color: #11683a;
+}
+.oxi-badge--danger {
+  background: var(--oxi-red-soft);
+  color: #b91c1c;
+}
+button.oxi-badge--danger {
+  cursor: pointer;
+}
+.oxi-badge--warning {
+  background: var(--oxi-amber-soft);
+  color: var(--oxi-amber);
+}
+.oxi-badge--promo {
+  background: var(--oxi-orange-soft);
+  color: #c2410c;
+}
+
+.oxi-formula {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.8fr) minmax(140px, 1.2fr) 60px 110px minmax(180px, 2fr);
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px dashed #e2e8f0;
+  font-size: 0.8rem;
+}
+.oxi-formula:last-of-type {
+  border-bottom: 0;
+}
+.oxi-formula__code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.76rem;
+}
+.oxi-formula__price {
+  font-weight: 600;
+}
+.oxi-formula__meta,
+.oxi-formula__services {
+  color: var(--oxi-muted);
+}
+
+.oxi-empty {
+  padding: 24px;
+  border: 1px dashed var(--oxi-border);
+  border-radius: var(--oxi-radius);
+  color: var(--oxi-green);
+  text-align: center;
+}
+
+/* ------------------------------------------------------------ rapport */
+.oxi-done__hero {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+  padding: 14px 16px;
+  border-radius: var(--oxi-radius);
+  background: var(--oxi-green-soft);
+  color: #11683a;
+}
+.oxi-done__hero.is-empty {
+  background: var(--oxi-amber-soft);
+  color: #854d0e;
+}
+.oxi-done__hero > .bi {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+.oxi-done__hero h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.oxi-done__hero p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: inherit;
+  opacity: 0.9;
+}
+.oxi-link {
+  color: var(--oxi-blue);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.oxi-link:hover {
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------ actions */
+.oxi-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.oxi-check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--oxi-amber-soft);
+  color: #854d0e;
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+.oxi-check input {
+  margin-top: 3px;
+  accent-color: var(--oxi-orange);
+}
+.oxi-confirm p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+@media (max-width: 720px) {
+  .oxi-steps__label {
+    display: none;
+  }
+  .oxi-steps li {
+    flex: none;
+  }
+  .oxi-formula {
+    grid-template-columns: 1fr 1fr;
+  }
+  .oxi-tabs {
+    flex-wrap: wrap;
+  }
+}

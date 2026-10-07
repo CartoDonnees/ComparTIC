@@ -1,0 +1,316 @@
+/* ==========================================================================
+   CompareTIC   Modales "Détails de l'offre" (admin + opérateur)
+   --------------------------------------------------------------------------
+   Modernise AdminOfferViewDialog & OperatorOfferViewDialog.
+   Le <Dialog> PrimeReact est rendu dans un portail : tout est préfixé par la
+   classe `.offer-view-dialog` (posée sur le Dialog) pour rester isolé.
+   Importé après globals.css dans pages/_app.js.
+   ========================================================================== */
+
+.offer-view-dialog {
+  --ov-ink: #0f172a;
+  --ov-muted: #64748b;
+  --ov-border: #e5e9f0;
+  --ov-surface: #ffffff;
+  --ov-soft: #f6f8fb;
+  --ov-green: #0e9f46;
+  --ov-orange: #f57c00;
+  --ov-accent: #075bf7;
+}
+
+/* ----- Chrome du Dialog ----- */
+.offer-view-dialog.p-dialog {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.32);
+}
+.offer-view-dialog .p-dialog-header {
+  background: linear-gradient(110deg, #1f2937 0%, #0f172a 100%) !important;
+  color: #fff !important;
+  padding: 14px 20px !important;
+  border: none;
+}
+.offer-view-dialog .p-dialog-header .p-dialog-title,
+.offer-view-dialog .p-dialog-header h5 {
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.offer-view-dialog .p-dialog-header .p-dialog-header-icon {
+  color: #fff;
+}
+.offer-view-dialog .p-dialog-header .p-dialog-header-icon:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+.offer-view-dialog .p-dialog-content {
+  background: #eef2f7;
+  padding: 0 !important;
+}
+.offer-view-dialog .p-dialog-footer {
+  background: #fff;
+  border-top: 1px solid var(--ov-border);
+  padding: 12px 16px;
+}
+
+/* ----- Barre d'actions (Imprimer) ----- */
+/* .offer-view-dialog .btn-warning { */
+  /* border-radius: 999px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #ffb020, #f57c00);
+  border: none;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(245, 124, 0, 0.28);
+  transition: transform 0.12s ease, filter 0.2s ease;
+} */
+.offer-view-dialog .btn-warning:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  color: #fff;
+}
+
+/* ----- La "feuille" document ----- */
+.offer-view-dialog .conatiner {
+  background: var(--ov-surface);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
+  border: 1px solid var(--ov-border);
+}
+/* On adoucit les cadres ".border" bruts internes */
+.offer-view-dialog .conatiner .border {
+  border: 1px solid var(--ov-border) !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ----- Bandeau titre de l'offre (alert-info) ----- */
+.offer-view-dialog .alert-info {
+  background: linear-gradient(135deg, #eaf1ff, #eef6ff) !important;
+  border: 1px solid #d7e6ff !important;
+  color: var(--ov-ink) !important;
+  border-radius: 8px !important;
+  letter-spacing: 0.4px;
+}
+
+/* ----- En-têtes de section (alert-success) ----- */
+.offer-view-dialog .alert-success {
+  background: var(--ov-soft) !important;
+  border: none !important;
+  border-left: 4px solid var(--ov-green) !important;
+  color: var(--ov-ink) !important;
+  border-radius: 8px !important;
+  padding: 8px 14px !important;
+  margin-bottom: 10px !important;
+}
+.offer-view-dialog .alert-success * {
+  color: var(--ov-ink) !important;
+}
+
+/* ----- Tableaux ----- */
+.offer-view-dialog .table {
+  margin-bottom: 0;
+  color: var(--ov-ink);
+}
+.offer-view-dialog .table > :not(caption) > * > * {
+  padding: 0.5rem 0.6rem;
+}
+.offer-view-dialog .table td {
+  border-color: #eef2f7;
+  vertical-align: middle;
+}
+.offer-view-dialog .table-sm td:first-child {
+  color: var(--ov-muted);
+}
+.offer-view-dialog .table-bordered {
+  border-radius: 8px;
+  overflow: hidden;
+}
+.offer-view-dialog .table-bordered th,
+.offer-view-dialog .table-bordered td {
+  border-color: var(--ov-border);
+}
+/* En-têtes de tableaux sombres -> slate moderne */
+.offer-view-dialog .table thead .bg-secondary,
+.offer-view-dialog .table thead tr.bg-secondary,
+.offer-view-dialog .bg-secondary {
+  background: #334155 !important;
+}
+.offer-view-dialog .table thead th {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+}
+
+/* ----- Cartes récap de formule ----- */
+.offer-view-dialog .card.card-lg {
+  border-radius: 8px !important;
+  border: 1px solid var(--ov-border) !important;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.offer-view-dialog .card.card-lg:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+}
+
+/* ----- Pastilles / badges ----- */
+.offer-view-dialog .badge {
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* ----- Boutons génériques dans la modale ----- */
+.offer-view-dialog .btn {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: transform 0.12s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.offer-view-dialog .btn:active {
+  transform: scale(0.98);
+}
+
+/* ----- Accessibilité : réduction des animations ----- */
+@media (prefers-reduced-motion: reduce) {
+  .offer-view-dialog .card.card-lg,
+  .offer-view-dialog .btn,
+  .offer-view-dialog .btn-warning {
+    transition: none !important;
+  }
+  .offer-view-dialog .card.card-lg:hover,
+  .offer-view-dialog .btn-warning:hover {
+    transform: none;
+  }
+}
+
+/* ----- Impression : garder un rendu neutre ----- */
+@media print {
+  .offer-view-dialog .conatiner {
+    box-shadow: none;
+    border: none;
+  }
+}
+
+/* ==========================================================================
+   MESSAGES « DOCUMENT »  (composant OfferDocumentViewer)
+   --------------------------------------------------------------------------
+   Trois situations, toutes explicites pour l'utilisateur final :
+     .doc-notice--info    -> aucun document joint à l'offre
+     .doc-notice--warning -> document déclaré mais fichier introuvable
+     .doc-notice--muted   -> vérification en cours
+   Classes non scopées : le composant est aussi utilisable hors modale.
+   ========================================================================== */
+
+.doc-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  margin: 1rem 0;
+  padding: 1.1rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: #f8fafc;
+}
+.doc-notice__icon {
+  flex: 0 0 auto;
+  font-size: 1.6rem;
+  line-height: 1;
+  margin-top: 2px;
+}
+.doc-notice__title {
+  font-size: 1rem;
+  font-weight: 800;
+  margin-bottom: 0.2rem;
+}
+.doc-notice__text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.doc-notice__meta {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+.doc-notice__meta code {
+  background: rgba(0, 0, 0, 0.06);
+  padding: 1px 6px;
+  border-radius: 5px;
+  color: inherit;
+}
+
+/* Aucun document joint : information neutre (ce n'est pas une erreur) */
+.doc-notice--info {
+  background: #eef6ff;
+  border-color: #cfe4ff;
+  color: #1e3a5f;
+}
+.doc-notice--info .doc-notice__icon {
+  color: #2563eb;
+}
+
+/* Document introuvable : avertissement, action possible */
+.doc-notice--warning {
+  background: #fff7e8;
+  border-color: #ffdfaa;
+  color: #7a4b06;
+}
+.doc-notice--warning .doc-notice__icon {
+  color: #f57c00;
+}
+
+/* Vérification en cours */
+.doc-notice--muted {
+  background: #f4f6f8;
+  border-color: #e5e9f0;
+  color: #64748b;
+}
+.doc-notice--muted .doc-notice__icon {
+  color: #94a3b8;
+}
+
+/* ---- Aperçu du document disponible ---- */
+.doc-viewer {
+  border: 1px solid #e5e9f0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+.doc-viewer__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.9rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e9f0;
+}
+.doc-viewer__name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.doc-viewer__dl {
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  background: #0f172a;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: background-color 0.18s ease;
+}
+.doc-viewer__dl:hover {
+  background: #000;
+  color: #fff;
+}
+.doc-viewer iframe {
+  display: block;
+  border: 0;
+}
+
+@media print {
+  .doc-viewer__bar { display: none; }
+}

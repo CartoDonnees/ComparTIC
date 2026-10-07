@@ -1,0 +1,45 @@
+# Intégration continue CompareTIC
+#
+# À chaque poussée et à chaque demande de fusion : dépendances, génération du
+# client Prisma, validation du schéma, tests unitaires (sans base) et
+# compilation de production. La suite d'intégration du workflow
+# (scripts/test-workflow.mjs) exige une base et un serveur : elle se lance en
+# local ou dans un environnement de recette.
+name: CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+
+jobs:
+  verifier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Installation
+        run: npm ci
+
+      - name: Client Prisma
+        run: npx prisma generate
+
+      - name: Validation du schéma
+        run: npx prisma validate
+        env:
+          DATABASE_URL: postgresql://user:pass@localhost:5432/placeholder
+
+      - name: Tests unitaires
+        run: node scripts/test-units.mjs
+
+      - name: Compilation de production
+        run: npx next build
+        env:
+          NEXT_DIST_DIR: .next-ci
+          JWT_SECRET: ci-placeholder-secret
+          DATABASE_URL: postgresql://user:pass@localhost:5432/placeholder
