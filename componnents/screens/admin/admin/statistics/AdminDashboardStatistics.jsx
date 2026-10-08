@@ -1624,7 +1624,7 @@ export default function AdminDashboardStatistics({ gStats }) {
                     className="text-center lato-black text-dark"
                     style={{ fontSize: 12 }}
                   >
-                    <em>Répartition par opérateurs et par type d'offre </em>
+                    <em>Répartition par opérateurs et par catégorie </em>
                   </div>
                 </div>
               </div>
