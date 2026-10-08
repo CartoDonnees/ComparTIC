@@ -510,6 +510,7 @@ export default function AdminDashboardStatistics({ gStats }) {
       setMainLoading(true);
       try {
       const _stats = await getMain1Stats(_filter);
+      console.log("=========STATS=====>", _stats)
 
       const _dataOpers = [];
       const _datasetsTypeOper = [];
@@ -564,6 +565,28 @@ export default function AdminDashboardStatistics({ gStats }) {
           },
         ],
         labels: ["Validée", "Réfusée", "En attente", "Suspendue"],
+      };
+
+
+      const dataByCateg = {
+        datasets: [
+          {
+            data: [
+              _stats?._nbMobile,
+              _stats?._nbFixe,
+            ],
+            backgroundColor: [
+              mainColors?.mobile,
+              mainColors?.fixe,
+            ],
+            hoverBackgroundColor: [
+              documentStyle.getPropertyValue("--cyan-400"),
+              documentStyle.getPropertyValue("--pink-400"),
+            ],
+            label: "offres",
+          },
+        ],
+        labels: ["Mobile", "Fixe"],
       };
 
       const dataByArea = {
@@ -761,6 +784,7 @@ export default function AdminDashboardStatistics({ gStats }) {
 
       const _data = { ...data };
       _data["dataByStatus"] = dataByStatus;
+      _data["dataByCateg"] = dataByCateg;
       _data["dataByArea"] = dataByArea;
       _data["dataDistribution"] = dataDistribution;
       _data["dataOpers"] = dataOpers;
@@ -1437,7 +1461,7 @@ export default function AdminDashboardStatistics({ gStats }) {
                   <div>
                     <Chart
                       type="doughnut"
-                      data={data?.dataByArea}
+                      data={data?.dataByCateg}
                       options={chartSumDataOptionLight}
                       plugins={[ChartDataLabels]}
                       height={200}

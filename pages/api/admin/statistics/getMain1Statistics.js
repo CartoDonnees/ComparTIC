@@ -9668,7 +9668,12 @@ async function handler(req, res) {
           _operOffers["nbInt" + oper.name] = 0;
           _operOffers["nbRoam" + oper.name] = 0;
         });
+
       }
+
+
+      let _nbMobile = 0;
+      let _nbFixe = 0;
 
       if (_offers?.length > 0) {
         _offers.forEach((offer) => {
@@ -9706,6 +9711,11 @@ async function handler(req, res) {
             }
           });
         });
+
+        operators.forEach((oper) => {
+          _nbMobile = _nbMobile + _operOffers["nbMobile" + oper.name];
+          _nbFixe = _nbFixe +  _operOffers["nbFixe" + oper.name];
+        })
       }
 
       const _stats = {
@@ -9829,6 +9839,8 @@ async function handler(req, res) {
         weekPromo: weekPromo,
         weekMobile: weekMobile,
         weekFixe: weekFixe,
+        _nbMobile,
+        _nbFixe
       };
 
       res.status(200).json(_stats);

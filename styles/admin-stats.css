@@ -194,7 +194,7 @@
 }
 .sts-table th {
   font-size: 0.7rem;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   letter-spacing: 0.05em;
   color: var(--sts-muted);
   font-weight: 700;
